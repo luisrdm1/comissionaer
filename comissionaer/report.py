@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fpdf import FPDF
 
-from calcfab.models import BaseRemuneratoria, Calculo, ResultadoMissao
+from comissionaer.models import BaseRemuneratoria, Calculo, ResultadoMissao
 
 _FONT_PATH = Path("C:/Windows/Fonts/arial.ttf")
 _FONT_BOLD_PATH = Path("C:/Windows/Fonts/arialbd.ttf")
@@ -74,8 +74,20 @@ class _RelatorioPDF(FPDF):
         self.ln(10)
 
         self.kv_row("Militar:", f"{calculo.militar.posto.value}  {calculo.militar.nome}")
-        self.kv_row("Habilitação:", calculo.militar.habilitacao.value)
+
+        if calculo.mudanca_encerramento:
+            self.kv_row("Habilitação (abertura):", calculo.militar.habilitacao.value)
+            hab_enc = calculo.militar.habilitacao_encerramento or calculo.militar.habilitacao
+            posto_enc = calculo.militar.posto_encerramento
+            enc_value = hab_enc.value
+            if posto_enc is not None:
+                enc_value = f"{enc_value}  [{posto_enc.value}]"
+            self.kv_row("Habilitação (encerramento):", enc_value)
+        else:
+            self.kv_row("Habilitação:", calculo.militar.habilitacao.value)
+
         dep = "Sim" if calculo.militar.dependentes.value else "Não"
+        fator_total = calculo.fator_ida + calculo.fator_volta
         self.apply_font(10, bold=True)
         self.cell(80, 6, "Dependentes:")
         self.apply_font(10)
@@ -83,11 +95,12 @@ class _RelatorioPDF(FPDF):
         self.apply_font(10, bold=True)
         self.cell(50, 6, "Fator ajuda de custo:")
         self.apply_font(10)
-        self.cell(0, 6, f"{calculo.fator_ajuda_custo}×")
+        self.cell(0, 6, f"{fator_total}× ({calculo.fator_ida}× ida + {calculo.fator_volta}× volta)")
         self.ln(10)
 
-    def render_base(self, base: BaseRemuneratoria, fator: Decimal) -> None:
-        self.section_header("BASE REMUNERATÓRIA")
+    def render_base(self, base: BaseRemuneratoria, fator: Decimal, label: str = "") -> None:
+        header = "BASE REMUNERATÓRIA" + (f" — {label}" if label else "")
+        self.section_header(header)
 
         linhas: list[tuple[str, Decimal]] = [
             ("Soldo militar da ativa", base.soldo),
@@ -153,8 +166,20 @@ class _RelatorioPDF(FPDF):
             ("Total de diárias", _brl(calculo.total_diarias)),
             ("Total de deslocamentos", _brl(calculo.total_deslocamentos)),
             ("Total de custo em missões", _brl(calculo.total_missoes)),
-            ("Ajuda de custo (comparativo)", _brl(calculo.total_ajuda_custo)),
         ]
+        if calculo.mudanca_encerramento:
+            linhas += [
+                (
+                    f"  Ajuda de custo ida ({calculo.fator_ida}× base abertura)",
+                    _brl(calculo.base.total * calculo.fator_ida),
+                ),
+                (
+                    f"  Ajuda de custo volta ({calculo.fator_volta}× base encerramento)",
+                    _brl(calculo.base_encerramento.total * calculo.fator_volta),
+                ),
+            ]
+        linhas.append(("Ajuda de custo (comparativo)", _brl(calculo.total_ajuda_custo)))
+
         for descr, valor in linhas:
             self.kv_row_right(descr, valor)
 
@@ -162,8 +187,6 @@ class _RelatorioPDF(FPDF):
         self.separator()
 
         econ = calculo.economicidade
-        # Positivo = missões > ajuda de custo → comissionamento justificado (verde)
-        # Negativo = missões < ajuda de custo → comissionamento ainda não se sustenta (vermelho)
         cor: tuple[int, int, int] = (0, 120, 0) if econ >= 0 else (180, 0, 0)
         self.set_text_color(*cor)
         self.apply_font(12, bold=True)
@@ -222,7 +245,11 @@ def gerar_pdf(calculo: Calculo, caminho: str) -> None:
     pdf.add_page()
 
     pdf.render_identificacao(calculo)
-    pdf.render_base(calculo.base, calculo.fator_ajuda_custo)
+    if calculo.mudanca_encerramento:
+        pdf.render_base(calculo.base, calculo.fator_ida, "ABERTURA")
+        pdf.render_base(calculo.base_encerramento, calculo.fator_volta, "ENCERRAMENTO")
+    else:
+        pdf.render_base(calculo.base, calculo.fator_ida + calculo.fator_volta)
     pdf.render_missoes(calculo.missoes)
     pdf.render_resumo(calculo)
 

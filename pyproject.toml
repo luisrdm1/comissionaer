@@ -1,7 +1,7 @@
 [project]
-name = "calcfab"
-version = "0.1.0"
-description = "Calculadora de comissionamento da FAB"
+name = "comissionaer"
+version = "0.2.0"
+description = "Análise de economicidade de comissionamento da FAB"
 requires-python = ">=3.14"
 dependencies = [
     "fpdf2>=2.8.7",
@@ -17,7 +17,10 @@ dev = [
 ]
 
 [project.scripts]
-calcfab = "calcfab.__main__:main"
+comissionaer = "comissionaer.__main__:main"
+
+[tool.uv]
+package = true
 
 [tool.ruff]
 line-length = 100

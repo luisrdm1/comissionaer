@@ -8,7 +8,7 @@ from typing import Any
 
 import questionary
 
-from calcfab.models import (
+from comissionaer.models import (
     CategoriaDiaria,
     Dependentes,
     DuracaoComissionamento,
@@ -62,7 +62,7 @@ def _ask_decimal(message: str, default: str = "0") -> Decimal:
             if value < 0:
                 raise ValueError
             return value
-        except (InvalidOperation, ValueError):
+        except InvalidOperation, ValueError:
             msg = "  Valor inválido. Use ponto ou vírgula como separador decimal."
             questionary.print(msg, style="bold fg:red")
 
@@ -113,6 +113,36 @@ def _coletar_militar() -> Militar:
     if _ask_confirm("Possui Adicional de Compensação Orgânica?", default=False):
         pct_comp = _ask_decimal("Percentual do adicional de compensação orgânica (ex: 20):") / 100
 
+    # Encerramento — promoção ou nova habilitação (Decreto 4.307/2002 art. 56)
+    posto_enc: Posto | None = None
+    hab_enc: Habilitacao | None = None
+    pct_comp_enc: Decimal | None = None
+
+    if _ask_confirm(
+        "\nHaverá promoção ou conclusão de nova habilitação até o encerramento?",
+        default=False,
+    ):
+        questionary.print("  — Situação no ENCERRAMENTO —", style="bold fg:yellow")
+
+        if _ask_confirm("  Mudará de posto no encerramento?", default=False):
+            posto_enc_label = _ask_select(
+                "  Posto no encerramento:", choices=[p.value for p in Posto]
+            )
+            posto_enc = next(p for p in Posto if p.value == posto_enc_label)
+
+        if _ask_confirm("  Concluirá nova habilitação no encerramento?", default=False):
+            hab_enc_label = _ask_select(
+                "  Habilitação no encerramento:", choices=[h.value for h in Habilitacao]
+            )
+            hab_enc = next(h for h in Habilitacao if h.value == hab_enc_label)
+
+        if _ask_confirm(
+            "  O adicional de compensação orgânica mudará no encerramento?", default=False
+        ):
+            pct_comp_enc = (
+                _ask_decimal("  Percentual de comp. orgânica no encerramento (ex: 25):") / 100
+            )
+
     return Militar(
         nome=nome,
         posto=posto,
@@ -120,6 +150,9 @@ def _coletar_militar() -> Militar:
         dependentes=dependentes,
         pct_compensacao_organica=pct_comp,
         duracao=duracao,
+        posto_encerramento=posto_enc,
+        habilitacao_encerramento=hab_enc,
+        pct_compensacao_organica_encerramento=pct_comp_enc,
     )
 
 

@@ -1,11 +1,11 @@
-"""Ponto de entrada: calcfab."""
+"""Ponto de entrada: comissionaer."""
 
 from rich.console import Console
 from rich.panel import Panel
 
-from calcfab.calc import calcular
-from calcfab.cli import coletar_dados
-from calcfab.report import gerar_pdf
+from comissionaer.calc import calcular
+from comissionaer.cli import coletar_dados
+from comissionaer.report import gerar_pdf
 
 console = Console()
 
@@ -13,7 +13,7 @@ console = Console()
 def main() -> None:
     console.print(
         Panel.fit(
-            "[bold cyan]CalcFAB[/bold cyan] — Calculadora de Comissionamento\n"
+            "[bold cyan]ComissionAER[/bold cyan] — Análise de Economicidade de Comissionamento\n"
             "[dim]Força Aérea Brasileira · 2026[/dim]",
             border_style="cyan",
         )
