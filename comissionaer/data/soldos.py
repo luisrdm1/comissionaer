@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from calcfab.models import Posto
+from comissionaer.models import Posto
 
 SOLDOS_2026: dict[Posto, Decimal] = {
     Posto.SEGUNDO_TENENTE: Decimal("8179.00"),

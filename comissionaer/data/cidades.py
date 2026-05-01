@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from calcfab.models import CategoriaDiaria
+from comissionaer.models import CategoriaDiaria
 
 VALORES_DIARIA: dict[CategoriaDiaria, Decimal] = {
     CategoriaDiaria.ESPECIAL: Decimal("425.00"),

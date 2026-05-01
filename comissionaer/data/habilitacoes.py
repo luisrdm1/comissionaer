@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from calcfab.models import Habilitacao
+from comissionaer.models import Habilitacao
 
 PERCENTUAIS: dict[Habilitacao, Decimal] = {
     Habilitacao.FORMACAO: Decimal("0.12"),

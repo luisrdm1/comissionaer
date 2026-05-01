@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from calcfab.models import Posto
+from comissionaer.models import Posto
 
 # Adicional Militar — percentual sobre o soldo
 ADICIONAL_MILITAR: dict[Posto, Decimal] = {

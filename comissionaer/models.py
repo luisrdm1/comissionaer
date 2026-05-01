@@ -81,6 +81,11 @@ class Militar:
     dependentes: Dependentes
     pct_compensacao_organica: Decimal  # 0 se não aplicável
     duracao: DuracaoComissionamento = DuracaoComissionamento.LONGO
+    # Situação no encerramento — preencher só se houver promoção ou nova habilitação
+    # (Decreto 4.307/2002 art. 56: ajuda de volta usa remuneração da data de encerramento)
+    posto_encerramento: Posto | None = None
+    habilitacao_encerramento: Habilitacao | None = None
+    pct_compensacao_organica_encerramento: Decimal | None = None
 
 
 @dataclass
@@ -99,13 +104,24 @@ class ResultadoMissao:
 @dataclass
 class Calculo:
     militar: Militar
-    base: BaseRemuneratoria
-    fator_ajuda_custo: Decimal
+    base: BaseRemuneratoria  # remuneração na abertura
+    base_encerramento: BaseRemuneratoria  # remuneração no encerramento (pode ser == base)
+    fator_ida: Decimal
+    fator_volta: Decimal
     missoes: list[ResultadoMissao] = field(default_factory=list[ResultadoMissao])
 
     @property
+    def mudanca_encerramento(self) -> bool:
+        return (
+            self.militar.posto_encerramento is not None
+            or self.militar.habilitacao_encerramento is not None
+            or self.militar.pct_compensacao_organica_encerramento is not None
+        )
+
+    @property
     def total_ajuda_custo(self) -> Decimal:
-        return self.base.total * self.fator_ajuda_custo
+        """Decreto 4.307/2002 art. 56 — ida usa base abertura, volta usa base encerramento."""
+        return self.base.total * self.fator_ida + self.base_encerramento.total * self.fator_volta
 
     @property
     def total_dias(self) -> int:
