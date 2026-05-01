@@ -1,0 +1,31 @@
+[project]
+name = "calcfab"
+version = "0.1.0"
+description = "Calculadora de comissionamento da FAB"
+requires-python = ">=3.14"
+dependencies = [
+    "fpdf2>=2.8.7",
+    "questionary>=2.1.1",
+    "rich>=15.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.409",
+    "ruff>=0.15.12",
+    "xlrd>=2.0.2",
+]
+
+[project.scripts]
+calcfab = "calcfab.__main__:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ANN"]
+
+[tool.pyright]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
