@@ -32,7 +32,7 @@ def main() -> None:
         )
     )
 
-    caminho_xls = _parse_flag("--xls")
+    caminho_ods = _parse_flag("--ods")
     caminho_yaml_from = _parse_flag("--from")
 
     if caminho_yaml_from:
@@ -56,13 +56,13 @@ def main() -> None:
     gerar_pdf(calculo, caminho)
     console.print(f"[bold]Relatório salvo em:[/bold] [underline]{caminho}[/underline]")
 
-    if caminho_xls:
-        from comissionaer.xls_io import atualizar_xls, derivar_nome_aba
+    if caminho_ods:
+        from comissionaer.ods_io import atualizar_ods, derivar_nome_aba
 
         aba = nome_aba or derivar_nome_aba(calculo)
-        console.print(f"\n[bold green]Atualizando XLS:[/bold green] aba [cyan]{aba}[/cyan]")
-        atualizar_xls(caminho_xls, {aba: calculo})
-        console.print(f"[bold]XLS salvo em:[/bold] [underline]{caminho_xls}[/underline]")
+        console.print(f"\n[bold green]Atualizando ODS:[/bold green] aba [cyan]{aba}[/cyan]")
+        atualizar_ods(caminho_ods, {aba: calculo})
+        console.print(f"[bold]ODS salvo em:[/bold] [underline]{caminho_ods}[/underline]")
 
 
 if __name__ == "__main__":

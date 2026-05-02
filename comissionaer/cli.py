@@ -76,7 +76,9 @@ def _ask_cotas_voo(message: str, default: int = 0) -> Decimal:
                 raise ValueError
             return Decimal(value * 2) / 100
         except ValueError:
-            questionary.print("  Valor inválido. Informe um inteiro de 0 a 10.", style="bold fg:red")
+            questionary.print(
+                "  Valor inválido. Informe um inteiro de 0 a 10.", style="bold fg:red"
+            )
 
 
 # ---------------------------------------------------------------------------

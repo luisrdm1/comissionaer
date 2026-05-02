@@ -14,7 +14,7 @@ git push origin master
 ## Stack
 
 - Python 3.14, uv, pyright strict, ruff
-- fpdf2 para PDF, xlrd/xlwt para XLS, PyYAML para YAML
+- fpdf2 para PDF, odfdo para ODS, PyYAML para YAML
 - Decimal para todos os valores monetários (nunca float)
 
 ## Regras de cálculo
