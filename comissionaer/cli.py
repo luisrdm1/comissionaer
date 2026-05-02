@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from typing import Any
 
 import questionary
@@ -53,19 +53,6 @@ def _ask_date(message: str) -> date:
             questionary.print("  Data inválida. Use o formato DD/MM/AAAA.", style="bold fg:red")
 
 
-def _ask_decimal(message: str, default: str = "0") -> Decimal:
-    while True:
-        raw = _ask_text(message, default=default)
-        raw = raw.replace(",", ".")
-        try:
-            value = Decimal(raw)
-            if value < 0:
-                raise ValueError
-            return value
-        except InvalidOperation, ValueError:
-            msg = "  Valor inválido. Use ponto ou vírgula como separador decimal."
-            questionary.print(msg, style="bold fg:red")
-
 
 def _ask_int(message: str, default: int = 1) -> int:
     while True:
@@ -77,6 +64,19 @@ def _ask_int(message: str, default: int = 1) -> int:
             return value
         except ValueError:
             questionary.print("  Informe um número inteiro positivo.", style="bold fg:red")
+
+
+def _ask_cotas_voo(message: str, default: int = 0) -> Decimal:
+    """Pede número de cotas de voo (0–10) e retorna o percentual decimal (0 a 0.20)."""
+    while True:
+        raw = _ask_text(f"{message} (0 a 10 cotas, cada cota = 2%):", default=str(default))
+        try:
+            value = int(raw)
+            if value < 0 or value > 10:
+                raise ValueError
+            return Decimal(value * 2) / 100
+        except ValueError:
+            questionary.print("  Valor inválido. Informe um inteiro de 0 a 10.", style="bold fg:red")
 
 
 # ---------------------------------------------------------------------------
@@ -109,9 +109,7 @@ def _coletar_militar() -> Militar:
     )
     duracao = next(d for d in DuracaoComissionamento if d.value == dur_label)
 
-    pct_comp = Decimal("0")
-    if _ask_confirm("Possui Adicional de Compensação Orgânica?", default=False):
-        pct_comp = _ask_decimal("Percentual do adicional de compensação orgânica (ex: 20):") / 100
+    pct_comp = _ask_cotas_voo("Cotas de voo (Comp. Orgânica) na abertura")
 
     # Encerramento — promoção ou nova habilitação (Decreto 4.307/2002 art. 56)
     posto_enc: Posto | None = None
@@ -139,9 +137,7 @@ def _coletar_militar() -> Militar:
         if _ask_confirm(
             "  O adicional de compensação orgânica mudará no encerramento?", default=False
         ):
-            pct_comp_enc = (
-                _ask_decimal("  Percentual de comp. orgânica no encerramento (ex: 25):") / 100
-            )
+            pct_comp_enc = _ask_cotas_voo("  Cotas de voo no encerramento")
 
     return Militar(
         nome=nome,
@@ -219,3 +215,14 @@ def coletar_dados() -> tuple[Militar, list[Missao], str]:
     missoes = _coletar_missoes()
     caminho = _pedir_nome_arquivo(militar.nome, militar.posto)
     return militar, missoes, caminho
+
+
+def perguntar_salvar_yaml(caminho_pdf: str) -> str | None:
+    """Pergunta se deseja salvar o planejamento como YAML. Retorna o caminho ou None."""
+    if not _ask_confirm("\nDeseja salvar o planejamento como YAML?", default=True):
+        return None
+    default_yaml = caminho_pdf.removesuffix(".pdf") + ".yaml"
+    caminho = _ask_text("Nome do arquivo YAML:", default=default_yaml)
+    if not caminho.endswith(".yaml"):
+        caminho += ".yaml"
+    return caminho
