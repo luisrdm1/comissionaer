@@ -22,6 +22,7 @@ VALORES_DIARIA: dict[tuple[TierDiaria, CategoriaDiaria], Decimal] = {
     (TierDiaria.PRACA, CategoriaDiaria.PADRAO): Decimal("280.00"),
 }
 
+# Decreto 4.307/2002, art. 20 §1º, Anexo IV (incluído pelo Decreto 6.907/2009)
 DESLOCAMENTO = Decimal("95.00")
 
 

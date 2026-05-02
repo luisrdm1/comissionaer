@@ -1,11 +1,15 @@
-"""Adicionais por posto — MP nº 2.215-10/2001 e Lei nº 13.954/2019."""
+"""Adicionais por posto.
+
+MP nº 2.215-10/2001, Tabela II Anexo II; Lei nº 13.954/2019, art. 8º, Anexo II.
+"""
 
 from decimal import Decimal
 
 from comissionaer.models import Posto
 
-# Adicional Militar — percentual sobre o soldo
+# Adicional Militar — percentual sobre o soldo (MP 2.215-10/2001, Tabela II do Anexo II)
 ADICIONAL_MILITAR: dict[Posto, Decimal] = {
+    # Oficiais
     Posto.SEGUNDO_TENENTE: Decimal("0.19"),
     Posto.PRIMEIRO_TENENTE: Decimal("0.19"),
     Posto.CAPITAO: Decimal("0.22"),
@@ -15,10 +19,19 @@ ADICIONAL_MILITAR: dict[Posto, Decimal] = {
     Posto.BRIGADEIRO: Decimal("0.28"),
     Posto.MAJOR_BRIGADEIRO: Decimal("0.28"),
     Posto.TENENTE_BRIGADEIRO: Decimal("0.28"),
+    # Praças — MP 2.215-10/2001, Tabela II Anexo II
+    Posto.SUBOFICIAL: Decimal("0.16"),
+    Posto.PRIMEIRO_SARGENTO: Decimal("0.16"),
+    Posto.SEGUNDO_SARGENTO: Decimal("0.16"),
+    Posto.TERCEIRO_SARGENTO: Decimal("0.16"),
+    Posto.CABO: Decimal("0.13"),
+    Posto.SOLDADO: Decimal("0.13"),
 }
 
 # Adicional de Disponibilidade Militar — percentual sobre o soldo
+# (Lei 13.954/2019, art. 8º, Anexo II)
 ADICIONAL_DISPONIBILIDADE: dict[Posto, Decimal] = {
+    # Oficiais
     Posto.SEGUNDO_TENENTE: Decimal("0.05"),
     Posto.PRIMEIRO_TENENTE: Decimal("0.06"),
     Posto.CAPITAO: Decimal("0.12"),
@@ -28,4 +41,12 @@ ADICIONAL_DISPONIBILIDADE: dict[Posto, Decimal] = {
     Posto.BRIGADEIRO: Decimal("0.35"),
     Posto.MAJOR_BRIGADEIRO: Decimal("0.38"),
     Posto.TENENTE_BRIGADEIRO: Decimal("0.41"),
+    # Praças — Lei 13.954/2019, art. 8º, Anexo II
+    # (percentual do quadro geral; QE tem percentuais maiores)
+    Posto.SUBOFICIAL: Decimal("0.32"),
+    Posto.PRIMEIRO_SARGENTO: Decimal("0.20"),
+    Posto.SEGUNDO_SARGENTO: Decimal("0.12"),
+    Posto.TERCEIRO_SARGENTO: Decimal("0.06"),
+    Posto.CABO: Decimal("0.06"),
+    Posto.SOLDADO: Decimal("0.05"),
 }

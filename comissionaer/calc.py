@@ -5,7 +5,7 @@ from decimal import Decimal
 from comissionaer.data.adicionais import ADICIONAL_DISPONIBILIDADE, ADICIONAL_MILITAR
 from comissionaer.data.cidades import DESLOCAMENTO, valor_diaria
 from comissionaer.data.habilitacoes import PERCENTUAIS
-from comissionaer.data.soldos import SOLDOS_2026
+from comissionaer.data.soldos import SOLDOS
 from comissionaer.models import (
     BaseRemuneratoria,
     Calculo,
@@ -35,7 +35,7 @@ _FATOR_VOLTA: dict[tuple[DuracaoComissionamento, Dependentes], Decimal] = {
 
 
 def calcular_base(militar: Militar) -> BaseRemuneratoria:
-    soldo = SOLDOS_2026[militar.posto]
+    soldo = SOLDOS[militar.posto]
     adic_hab = soldo * PERCENTUAIS[militar.habilitacao]
     adic_mil = soldo * ADICIONAL_MILITAR[militar.posto]
     adic_disp = soldo * ADICIONAL_DISPONIBILIDADE[militar.posto]
@@ -58,7 +58,7 @@ def calcular_base_encerramento(militar: Militar) -> BaseRemuneratoria:
         if militar.pct_compensacao_organica_encerramento is not None
         else militar.pct_compensacao_organica
     )
-    soldo = SOLDOS_2026[posto]
+    soldo = SOLDOS[posto]
     adic_hab = soldo * PERCENTUAIS[hab]
     adic_mil = soldo * ADICIONAL_MILITAR[posto]
     adic_disp = soldo * ADICIONAL_DISPONIBILIDADE[posto]
