@@ -13,7 +13,11 @@ _FONT_PATH = Path("C:/Windows/Fonts/arial.ttf")
 _FONT_BOLD_PATH = Path("C:/Windows/Fonts/arialbd.ttf")
 
 # Larguras das colunas da tabela de missões (mm) — paisagem A4 = 267 mm úteis
-_COL_W = (10.0, 82.0, 20.0, 20.0, 14.0, 32.0, 32.0)
+# Colunas fixas (Nº, Início, Término, Dias, Diárias, Total); descrição pega o restante.
+_PAGE_W = 267.0
+_COL_FIXED = (10.0, 23.0, 23.0, 14.0, 41.0, 41.0)
+_COL_DESCR = _PAGE_W - sum(_COL_FIXED)  # 115 mm
+_COL_W = (_COL_FIXED[0], _COL_DESCR, *_COL_FIXED[1:])
 
 
 def _brl(value: Decimal) -> str:
@@ -128,18 +132,29 @@ class _RelatorioPDF(FPDF):
         self.cell(0, 6, _brl(base.total * fator), align="R")
         self.ln(10)
 
+    def _fit_text(self, text: str, width: float) -> str:
+        """Trunca o texto para caber em `width` mm na fonte atual."""
+        if self.get_string_width(text) <= width:
+            return text
+        while text and self.get_string_width(text + "…") > width:
+            text = text[:-1]
+        return text + "…"
+
     def render_missoes(self, missoes: list[ResultadoMissao]) -> None:
         self.section_header("MISSÕES")
 
+        line_h = 5.5
         headers = ["Nº", "Descrição / OM", "Início", "Término", "Dias", "Diárias", "Total"]
         self.set_fill_color(180, 200, 225)
         for i, h in enumerate(headers):
             self.apply_font(8, bold=True)
-            self.cell(_COL_W[i], 6, h, border=1, fill=True, align="C")
+            self.cell(_COL_W[i], line_h, h, border=1, fill=True, align="C")
         self.ln()
 
         for idx, rm in enumerate(missoes, start=1):
-            descr = f"{rm.missao.descricao[:55]}  [{rm.missao.om_destino}]"
+            self.apply_font(8)
+            descr_full = f"{rm.missao.descricao}  [{rm.missao.om_destino}]"
+            descr = self._fit_text(descr_full, _COL_W[1] - 2)
             row: list[tuple[float, str, str]] = [
                 (_COL_W[0], str(idx), "C"),
                 (_COL_W[1], descr, "L"),
@@ -153,7 +168,7 @@ class _RelatorioPDF(FPDF):
             self.set_fill_color(240, 245, 252)
             for w, txt, align in row:
                 self.apply_font(8)
-                self.cell(w, 5.5, txt, border=1, fill=fill, align=align)  # type: ignore[arg-type]
+                self.cell(w, line_h, txt, border=1, fill=fill, align=align)  # type: ignore[arg-type]
             self.ln()
 
         self.ln(4)
