@@ -13,6 +13,7 @@ from comissionaer.models import (
     DuracaoComissionamento,
     Militar,
     Missao,
+    Posto,
     ResultadoMissao,
 )
 
@@ -71,9 +72,9 @@ def calcular_base_encerramento(militar: Militar) -> BaseRemuneratoria:
     )
 
 
-def calcular_missao(missao: Missao) -> ResultadoMissao:
+def calcular_missao(missao: Missao, posto: Posto) -> ResultadoMissao:
     dias = (missao.data_termino - missao.data_inicio).days + 1
-    diaria = valor_diaria(missao.categoria_diaria)
+    diaria = valor_diaria(posto, missao.categoria_diaria)
     total_diarias = (Decimal(dias) - Decimal("0.5")) * diaria
     total_deslocamento = DESLOCAMENTO * missao.num_deslocamentos
     return ResultadoMissao(
@@ -96,5 +97,5 @@ def calcular(militar: Militar, missoes: list[Missao]) -> Calculo:
         base_encerramento=base_enc,
         fator_ida=fator_ida,
         fator_volta=fator_volta,
-        missoes=[calcular_missao(m) for m in missoes],
+        missoes=[calcular_missao(m, militar.posto) for m in missoes],
     )

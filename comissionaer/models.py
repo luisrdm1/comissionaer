@@ -16,6 +16,12 @@ class Posto(Enum):
     BRIGADEIRO = "Brig"
     MAJOR_BRIGADEIRO = "Maj Brig"
     TENENTE_BRIGADEIRO = "Ten Brig"
+    SUBOFICIAL = "SO"
+    PRIMEIRO_SARGENTO = "1º Sgt"
+    SEGUNDO_SARGENTO = "2º Sgt"
+    TERCEIRO_SARGENTO = "3º Sgt"
+    CABO = "Cb"
+    SOLDADO = "Sd"
 
 
 class Habilitacao(Enum):
@@ -26,10 +32,37 @@ class Habilitacao(Enum):
     ALTOS_I = "Altos Estudos Cat. I — Doutorado / ECEMAR (73%)"
 
 
+class TierDiaria(Enum):
+    OFICIAL_GENERAL = "Oficial General"
+    OFICIAL_SUPERIOR = "Oficial Superior"
+    OFICIAL_SUBALTERNO = "Oficial Intermediário/Subalterno"
+    PRACA_GRADUADA = "Praça Graduada (SO/Sgt)"
+    PRACA = "Praça (Cb/Sd)"
+
+
+TIER_DIARIA: dict[Posto, TierDiaria] = {
+    Posto.SEGUNDO_TENENTE: TierDiaria.OFICIAL_SUBALTERNO,
+    Posto.PRIMEIRO_TENENTE: TierDiaria.OFICIAL_SUBALTERNO,
+    Posto.CAPITAO: TierDiaria.OFICIAL_SUBALTERNO,
+    Posto.MAJOR: TierDiaria.OFICIAL_SUPERIOR,
+    Posto.TENENTE_CORONEL: TierDiaria.OFICIAL_SUPERIOR,
+    Posto.CORONEL: TierDiaria.OFICIAL_SUPERIOR,
+    Posto.BRIGADEIRO: TierDiaria.OFICIAL_GENERAL,
+    Posto.MAJOR_BRIGADEIRO: TierDiaria.OFICIAL_GENERAL,
+    Posto.TENENTE_BRIGADEIRO: TierDiaria.OFICIAL_GENERAL,
+    Posto.SUBOFICIAL: TierDiaria.PRACA_GRADUADA,
+    Posto.PRIMEIRO_SARGENTO: TierDiaria.PRACA_GRADUADA,
+    Posto.SEGUNDO_SARGENTO: TierDiaria.PRACA_GRADUADA,
+    Posto.TERCEIRO_SARGENTO: TierDiaria.PRACA_GRADUADA,
+    Posto.CABO: TierDiaria.PRACA,
+    Posto.SOLDADO: TierDiaria.PRACA,
+}
+
+
 class CategoriaDiaria(Enum):
-    ESPECIAL = "Especial — Brasília, Manaus, Rio de Janeiro, São Paulo (R$ 425,00)"
-    CAPITAL = "Capital de estado (R$ 380,00)"
-    PADRAO = "Demais municípios (R$ 335,00)"
+    ESPECIAL = "Especial — Brasília, Manaus, Rio de Janeiro, São Paulo"
+    CAPITAL = "Capital de estado"
+    PADRAO = "Demais municípios"
 
 
 class DuracaoComissionamento(Enum):
