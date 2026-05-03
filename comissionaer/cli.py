@@ -8,6 +8,12 @@ from typing import Any
 
 import questionary
 
+from comissionaer.catalogo_ica import (
+    MissaoCatalogoICA,
+    buscar_missoes_catalogo,
+    carregar_catalogo_ica_55_87_2026,
+    missao_planejamento_from_catalogo,
+)
 from comissionaer.models import (
     CategoriaDiaria,
     Dependentes,
@@ -44,14 +50,16 @@ def _ask_confirm(message: str, default: bool = True) -> bool:
     return bool(result)
 
 
-def _ask_date(message: str) -> date:
+def _ask_date(message: str, default: date | None = None) -> date:
     while True:
-        raw = _ask_text(f"{message} (DD/MM/AAAA)")
+        default_text = default.strftime("%d/%m/%Y") if default else ""
+        raw = _ask_text(f"{message} (DD/MM/AAAA)", default=default_text)
+        if not raw and default is not None:
+            return default
         try:
             return datetime.strptime(raw, "%d/%m/%Y").date()
         except ValueError:
             questionary.print("  Data inválida. Use o formato DD/MM/AAAA.", style="bold fg:red")
-
 
 
 def _ask_int(message: str, default: int = 1) -> int:
@@ -64,6 +72,19 @@ def _ask_int(message: str, default: int = 1) -> int:
             return value
         except ValueError:
             questionary.print("  Informe um número inteiro positivo.", style="bold fg:red")
+
+
+def _ask_year(message: str) -> int | None:
+    while True:
+        raw = _ask_text(message)
+        if not raw:
+            return None
+        try:
+            return int(raw)
+        except ValueError:
+            questionary.print(
+                "  Informe um ano com quatro dígitos ou deixe vazio.", style="bold fg:red"
+            )
 
 
 def _ask_cotas_voo(message: str, default: int = 0) -> Decimal:
@@ -154,6 +175,134 @@ def _coletar_militar() -> Militar:
     )
 
 
+def _formatar_missao_catalogo(missao: MissaoCatalogoICA, indice: int) -> str:
+    inicio = missao.data_inicio_planejamento.strftime("%d/%m/%Y")
+    termino = missao.data_termino_planejamento.strftime("%d/%m/%Y")
+    local = f"{missao.cidade}/{missao.uf}" if missao.cidade and missao.uf else "local nao informado"
+    om = ", ".join(missao.om_destino) if missao.om_destino else "OM nao informada"
+    return f"{indice}. {inicio} a {termino} | {missao.descricao} | {local} | {om}"
+
+
+def _selecionar_missao_catalogo() -> MissaoCatalogoICA:
+    catalogo = carregar_catalogo_ica_55_87_2026()
+    while True:
+        questionary.print("\n  — Busca no catálogo ICA 55-87/2026 —", style="bold fg:cyan")
+        texto = _ask_text("  Texto livre:")
+        om = _ask_text("  OM:").upper()
+        cidade = _ask_text("  Cidade:")
+        uf = _ask_text("  UF:").upper()[:2]
+        icao = _ask_text("  ICAO:").upper()
+        ano = _ask_year("  Ano:")
+
+        resultados = buscar_missoes_catalogo(
+            catalogo,
+            texto=texto,
+            om=om,
+            cidade=cidade,
+            uf=uf,
+            icao=icao,
+            ano=ano,
+        )
+        if not resultados:
+            questionary.print("  Nenhuma missão encontrada.", style="bold fg:red")
+            continue
+
+        limite = 30
+        if len(resultados) > limite:
+            questionary.print(
+                f"  {len(resultados)} missões encontradas; exibindo as primeiras {limite}.",
+                style="bold fg:yellow",
+            )
+        exibidas = resultados[:limite]
+        opcoes = [_formatar_missao_catalogo(missao, i + 1) for i, missao in enumerate(exibidas)]
+        opcoes.append("Refinar busca")
+        selecionada = _ask_select("  Selecione a missão:", choices=opcoes)
+        if selecionada == "Refinar busca":
+            continue
+        return exibidas[opcoes.index(selecionada)]
+
+
+def _coletar_missao_catalogo() -> Missao:
+    item = _selecionar_missao_catalogo()
+    questionary.print(f"\n  Selecionada: {item.descricao}", style="bold fg:green")
+
+    om_destino = item.om_destino[0] if item.om_destino else ""
+    if len(item.om_destino) > 1:
+        escolha_om = _ask_select(
+            "  OM de destino:", choices=[*item.om_destino, "Informar manualmente"]
+        )
+        om_destino = (
+            _ask_text("  OM de destino:").upper()
+            if escolha_om == "Informar manualmente"
+            else escolha_om
+        )
+    elif not om_destino:
+        om_destino = _ask_text("  OM de destino:").upper()
+
+    categoria = item.categoria_diaria
+    if categoria is None:
+        cat_label = _ask_select(
+            "  Categoria da diária:", choices=[c.value for c in CategoriaDiaria]
+        )
+        categoria = next(c for c in CategoriaDiaria if c.value == cat_label)
+
+    inicio = item.data_inicio_planejamento
+    termino = item.data_termino_planejamento
+    if _ask_confirm("  Ajustar datas/OM/categoria do planejamento?", default=False):
+        om_destino = _ask_text("  OM de destino:", default=om_destino).upper()
+        cat_label = _ask_select(
+            "  Categoria da diária:", choices=[c.value for c in CategoriaDiaria]
+        )
+        categoria = next(c for c in CategoriaDiaria if c.value == cat_label)
+        inicio = _ask_date("  Data de início", default=inicio)
+        termino = _ask_date("  Data de término", default=termino)
+        while termino < inicio:
+            questionary.print("  Data de término anterior ao início.", style="bold fg:red")
+            termino = _ask_date("  Data de término", default=termino)
+
+    num_desloc = _ask_int("  Número de deslocamentos:", default=1)
+    return missao_planejamento_from_catalogo(
+        item,
+        om_destino=om_destino,
+        categoria_diaria=categoria,
+        data_inicio=inicio,
+        data_termino=termino,
+        num_deslocamentos=num_desloc,
+    )
+
+
+def _coletar_missao_manual() -> Missao:
+    descricao = _ask_text("  Descrição (ex: EXCON IVR 2027 — Santa Maria/RS):")
+    om_destino = _ask_text("  OM de destino (sigla):")
+    cidade = _ask_text("  Município de destino:")
+    uf = _ask_text("  UF (sigla, ex: RS):").upper()[:2]
+
+    cat_label = _ask_select(
+        "  Categoria da diária:",
+        choices=[c.value for c in CategoriaDiaria],
+    )
+    categoria = next(c for c in CategoriaDiaria if c.value == cat_label)
+
+    inicio = _ask_date("  Data de início")
+    termino = _ask_date("  Data de término")
+
+    while termino < inicio:
+        questionary.print("  Data de término anterior ao início.", style="bold fg:red")
+        termino = _ask_date("  Data de término")
+
+    num_desloc = _ask_int("  Número de deslocamentos:", default=1)
+    return Missao(
+        descricao=descricao,
+        om_destino=om_destino,
+        cidade=cidade,
+        uf=uf,
+        categoria_diaria=categoria,
+        data_inicio=inicio,
+        data_termino=termino,
+        num_deslocamentos=num_desloc,
+    )
+
+
 def _coletar_missoes() -> list[Missao]:
     questionary.print("\n=== MISSÕES ===", style="bold")
     missoes: list[Missao] = []
@@ -165,39 +314,16 @@ def _coletar_missoes() -> list[Missao]:
             break
 
         questionary.print(f"\n  — Missão {len(missoes) + 1} —", style="bold fg:cyan")
-
-        descricao = _ask_text("  Descrição (ex: EXCON IVR 2027 — Santa Maria/RS):")
-        om_destino = _ask_text("  OM de destino (sigla):")
-        cidade = _ask_text("  Município de destino:")
-        uf = _ask_text("  UF (sigla, ex: RS):").upper()[:2]
-
-        cat_label = _ask_select(
-            "  Categoria da diária:",
-            choices=[c.value for c in CategoriaDiaria],
+        origem = _ask_select(
+            "  Origem dos dados da missão:",
+            choices=["Catálogo ICA 55-87/2026", "Informar manualmente"],
         )
-        categoria = next(c for c in CategoriaDiaria if c.value == cat_label)
-
-        inicio = _ask_date("  Data de início")
-        termino = _ask_date("  Data de término")
-
-        while termino < inicio:
-            questionary.print("  Data de término anterior ao início.", style="bold fg:red")
-            termino = _ask_date("  Data de término")
-
-        num_desloc = _ask_int("  Número de deslocamentos:", default=1)
-
-        missoes.append(
-            Missao(
-                descricao=descricao,
-                om_destino=om_destino,
-                cidade=cidade,
-                uf=uf,
-                categoria_diaria=categoria,
-                data_inicio=inicio,
-                data_termino=termino,
-                num_deslocamentos=num_desloc,
-            )
+        missao = (
+            _coletar_missao_catalogo()
+            if origem.startswith("Catálogo")
+            else _coletar_missao_manual()
         )
+        missoes.append(missao)
 
     return missoes
 
