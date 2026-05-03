@@ -159,9 +159,17 @@ def classificar_ajuda_custo(inicio: date, termino: date) -> FaixaAjudaCusto:
     return FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
 
 
+def classificar_ajuda_custo_por_dias(total_dias: int) -> FaixaAjudaCusto:
+    """Classifica pela soma dos dias de missão, não pelo span do calendário."""
+    if total_dias <= 15:
+        return FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
+    if total_dias <= 90:
+        return FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
+    return FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
+
+
 def classificar_ajuda_custo_missoes(missoes: list[Missao]) -> FaixaAjudaCusto:
-    inicio, termino = periodo_missoes(missoes)
-    return classificar_ajuda_custo(inicio, termino)
+    return classificar_ajuda_custo_por_dias(dias_missoes(missoes))
 
 
 @dataclass
@@ -197,15 +205,6 @@ class Militar:
     posto_encerramento: Posto | None = None
     habilitacao_encerramento: Habilitacao | None = None
     pct_compensacao_organica_encerramento: Decimal | None = None
-
-    @property
-    def faixa_ajuda_custo(self) -> FaixaAjudaCusto:
-        if self.data_inicio_comissionamento is None or self.data_termino_comissionamento is None:
-            raise ValueError("Período do comissionamento não foi definido.")
-        return classificar_ajuda_custo(
-            self.data_inicio_comissionamento,
-            self.data_termino_comissionamento,
-        )
 
 
 @dataclass

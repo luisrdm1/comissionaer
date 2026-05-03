@@ -16,7 +16,8 @@ from comissionaer.models import (
     Missao,
     Posto,
     ResultadoMissao,
-    classificar_ajuda_custo,
+    classificar_ajuda_custo_por_dias,
+    dias_missoes,
     periodo_missoes,
 )
 
@@ -109,7 +110,7 @@ def fatores_ajuda_custo(
 
 def calcular(militar: Militar, missoes: list[Missao]) -> Calculo:
     inicio, termino = periodo_missoes(missoes)
-    faixa = classificar_ajuda_custo(inicio, termino)
+    faixa = classificar_ajuda_custo_por_dias(dias_missoes(missoes))
     militar.data_inicio_comissionamento = inicio
     militar.data_termino_comissionamento = termino
 
