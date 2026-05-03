@@ -186,7 +186,7 @@ def _tabela_lista_missoes(missoes: list[Missao], militar: Militar | None = None)
 
     t = Table(title=f"Missões ({len(missoes)})", show_header=True, padding=(0, 1))
     t.add_column("#", style="bold", justify="right")
-    t.add_column("Descrição", max_width=42, no_wrap=False)
+    t.add_column("Descrição")
     t.add_column("OM")
     t.add_column("Local")
     t.add_column("Início")
