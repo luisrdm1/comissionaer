@@ -158,6 +158,17 @@ def _fmt_fator(v: Decimal) -> str:
 # Tabelas de revisão (Rich)
 # ---------------------------------------------------------------------------
 
+def _validar_saram(s: str) -> bool:
+    if len(s) != 8:
+        return False
+    if s[6] != "-":
+        return False
+    if not s[:6].isdigit():
+        return False
+    # último caractere pode ser dígito ou letra maiúscula
+    return s[7].isdigit() or (s[7].isalpha() and s[7].isupper())
+
+
 _CONFIRMAR = "✓ Confirmar"
 _SIM = "Sim"
 _NAO = "Não"
@@ -169,6 +180,8 @@ def _tabela_militar(m: Militar) -> None:
     t.add_column("Valor")
     t.add_row("Posto", m.posto.value)
     t.add_row("Nome", m.nome)
+    t.add_row("Nome de guerra", m.nome_guerra or "—")
+    t.add_row("SARAM", m.saram or "—")
     t.add_row("Habilitação", m.habilitacao.value)
     t.add_row("Dependentes", _SIM if m.dependentes == Dependentes.SIM else _NAO)
     t.add_row("Comp. Orgânica (abertura)", f"{_pct_to_cotas(m.pct_compensacao_organica)} cotas")
@@ -321,6 +334,8 @@ def _tabela_lista_missoes(missoes: list[Missao], militar: Militar | None = None)
 
 _CAMPO_POSTO = "Posto"
 _CAMPO_NOME = "Nome"
+_CAMPO_NOME_GUERRA = "Nome de guerra"
+_CAMPO_SARAM = "SARAM"
 _CAMPO_HABILITACAO = "Habilitação"
 _CAMPO_DEPENDENTES = "Dependentes"
 _CAMPO_COMP_ORG = "Comp. Orgânica (abertura)"
@@ -369,6 +384,17 @@ def _coletar_militar() -> Militar:
         console.print("  Nome não pode ser vazio.", style="bold red")
         nome = _ask_text("Nome completo (sem abreviações):")
 
+    nome_guerra = _ask_text("Nome de guerra (ex: MOLON):")
+
+    saram = ""
+    while True:
+        saram_input = _ask_text("SARAM (formato NNNNNN-X):")
+        saram_input = saram_input.strip().upper()
+        if _validar_saram(saram_input):
+            saram = saram_input
+            break
+        console.print("  Formato inválido. Use NNNNNN-X (ex: 123456-7).", style="bold red")
+
     hab_label = _ask_select(
         "Habilitação (curso mais alto concluído):", choices=[h.value for h in Habilitacao]
     )
@@ -386,6 +412,8 @@ def _coletar_militar() -> Militar:
 
     militar = Militar(
         nome=nome,
+        nome_guerra=nome_guerra,
+        saram=saram,
         posto=posto,
         habilitacao=habilitacao,
         dependentes=dependentes,
@@ -404,6 +432,8 @@ def _coletar_militar() -> Militar:
                 _CONFIRMAR,
                 _CAMPO_POSTO,
                 _CAMPO_NOME,
+                _CAMPO_NOME_GUERRA,
+                _CAMPO_SARAM,
                 _CAMPO_HABILITACAO,
                 _CAMPO_DEPENDENTES,
                 _CAMPO_COMP_ORG,
@@ -423,6 +453,18 @@ def _coletar_militar() -> Militar:
                     console.print("  Nome não pode ser vazio.", style="bold red")
                     novo = _ask_text("Nome completo:", default=militar.nome)
                 militar.nome = novo
+            elif acao == _CAMPO_NOME_GUERRA:
+                militar.nome_guerra = _ask_text("Nome de guerra:", default=militar.nome_guerra)
+            elif acao == _CAMPO_SARAM:
+                while True:
+                    saram_input = _ask_text("SARAM (formato NNNNNN-X):", default=militar.saram)
+                    saram_input = saram_input.strip().upper()
+                    if _validar_saram(saram_input):
+                        militar.saram = saram_input
+                        break
+                    console.print(
+                        "  Formato inválido. Use NNNNNN-X (ex: 123456-7).", style="bold red"
+                    )
             elif acao == _CAMPO_HABILITACAO:
                 label = _ask_select("Habilitação:", choices=[h.value for h in Habilitacao])
                 militar.habilitacao = next(h for h in Habilitacao if h.value == label)

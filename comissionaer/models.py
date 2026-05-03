@@ -212,10 +212,11 @@ class Militar:
     habilitacao: Habilitacao
     dependentes: Dependentes
     pct_compensacao_organica: Decimal  # 0 se não aplicável
+    # Campos opcionais com default (todos no final)
+    nome_guerra: str = ""
+    saram: str = ""
     data_inicio_comissionamento: date | None = None
     data_termino_comissionamento: date | None = None
-    # Situação no encerramento — preencher só se houver promoção ou nova habilitação
-    # (Decreto 4.307/2002 art. 56: ajuda de volta usa remuneração da data de encerramento)
     posto_encerramento: Posto | None = None
     habilitacao_encerramento: Habilitacao | None = None
     pct_compensacao_organica_encerramento: Decimal | None = None

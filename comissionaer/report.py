@@ -8,6 +8,7 @@ from pathlib import Path
 from fpdf import FPDF
 
 from comissionaer.data.habilitacoes import PERCENTUAIS
+from comissionaer.data.institucional import DIRETOR_CARGO, DIRETOR_NOME
 from comissionaer.models import BaseRemuneratoria, Calculo, ResultadoMissao
 
 _FONT_PATH = Path("C:/Windows/Fonts/arial.ttf")
@@ -122,15 +123,17 @@ class _RelatorioPDF(FPDF):
             (col_x[0], y, "Militar:", f"{calculo.militar.posto.value} {calculo.militar.nome}", 18),
             (col_x[1], y, "Dependentes:", dep, 24),
             (col_x[2], y, "Hab. abertura:", self._habilitacao_curta(calculo), 28),
+            (col_x[0], y + line_h, "Nome de guerra:", calculo.militar.nome_guerra or "—", 30),
+            (col_x[1], y + line_h, "SARAM:", calculo.militar.saram or "—", 18),
             (
-                col_x[0],
+                col_x[2],
                 y + line_h,
                 "Hab. encerramento:",
                 self._habilitacao_curta(calculo, encerramento=True),
-                36,
+                35,
             ),
-            (col_x[1], y + line_h, "Comp. org. abertura:", comp_abertura, 39),
-            (col_x[2], y + line_h, "Comp. org. encerramento:", comp_encerramento, 45),
+            (col_x[0], y + line_h * 2, "Comp. org. abertura:", comp_abertura, 45),
+            (col_x[1], y + line_h * 2, "Comp. org. encerramento:", comp_encerramento, 45),
         ]
         for x, y_pos, label, value, label_w in fields:
             self.set_xy(x, y_pos)
@@ -139,7 +142,7 @@ class _RelatorioPDF(FPDF):
             self.apply_font(8)
             self.cell(0, line_h, value)
 
-        self.set_y(y + line_h * 2 + 2)
+        self.set_y(y + line_h * 3 + 2)
 
     def _base_linhas(self, base: BaseRemuneratoria) -> list[tuple[str, Decimal]]:
         linhas: list[tuple[str, Decimal]] = [
@@ -387,11 +390,11 @@ class _RelatorioPDF(FPDF):
         self.ln(5)
         self.set_x(183)
         self.apply_font(9)
-        self.cell(95, 5, "DIRETOR_NOME_PRIVADO", align="C")
+        self.cell(95, 5, DIRETOR_NOME, align="C")
         self.ln(5)
         self.set_x(183)
         self.apply_font(9)
-        self.cell(95, 5, "Diretor do IAOp", align="C")
+        self.cell(95, 5, DIRETOR_CARGO, align="C")
 
     # ------------------------------------------------------------------
     # Cabeçalho e rodapé de página

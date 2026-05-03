@@ -78,5 +78,5 @@ def test_pdf_com_abertura_e_encerramento_cabe_em_uma_pagina(tmp_path: Path) -> N
     assert "10 cotas (20%)" in text
     assert "Missão e local de realização do serviço" in text
     assert "TST1" in text
-    assert "DIRETOR_NOME_PRIVADO" in text
+    # Diretor genérico (sem COMISSIONAER_DIRETOR_* configurado)
     assert "Diretor do IAOp" in text

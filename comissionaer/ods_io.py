@@ -7,10 +7,8 @@ from pathlib import Path
 
 from odfdo import Document, Table
 
+from comissionaer.data.institucional import DIRETOR_CARGO, DIRETOR_NOME
 from comissionaer.models import Calculo, Posto
-
-_DIRECTOR_NOME = "DIRETOR_NOME_PRIVADO"
-_DIRECTOR_CARGO = "Diretor do IAOp"
 
 _POSTO_ABA: dict[Posto, str] = {
     Posto.SEGUNDO_TENENTE: "2T",
@@ -108,8 +106,8 @@ def _build_table(nome: str, calculo: Calculo) -> Table:
     _sv(table, 10, row_comp, float(calculo.total_ajuda_custo))
     _sv(table, 11, row_comp, float(calculo.total_missoes))
 
-    _sv(table, 8, row_comp + 4, _DIRECTOR_NOME)
-    _sv(table, 8, row_comp + 5, _DIRECTOR_CARGO)
+    _sv(table, 8, row_comp + 4, DIRETOR_NOME)
+    _sv(table, 8, row_comp + 5, DIRETOR_CARGO)
 
     return table
 
