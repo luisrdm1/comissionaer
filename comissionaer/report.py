@@ -147,14 +147,11 @@ class _RelatorioPDF(FPDF):
             ("Adicional de habilitação", base.adicional_habilitacao),
             ("Adicional militar", base.adicional_militar),
             ("Adicional de disponibilidade militar", base.adicional_disponibilidade),
+            (
+                "Adicional de compensação orgânica (cotas de voo)",
+                base.adicional_compensacao_organica,
+            ),
         ]
-        if base.adicional_compensacao_organica > 0:
-            linhas.append(
-                (
-                    "Adicional de compensação orgânica (cotas de voo)",
-                    base.adicional_compensacao_organica,
-                )
-            )
         return linhas
 
     def render_base(self, base: BaseRemuneratoria, fator: Decimal, label: str = "") -> None:
