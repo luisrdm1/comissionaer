@@ -114,34 +114,32 @@ class _RelatorioPDF(FPDF):
         comp_abertura = _cotas(calculo.militar.pct_compensacao_organica)
         comp_encerramento = _cotas(self._pct_comp_encerramento(calculo))
 
+        col_x = (11.0, 104.0, 197.0)
+        y = self.get_y()
         line_h = 4.8
-        rows = [
+
+        fields = [
+            (col_x[0], y, "Militar:", f"{calculo.militar.posto.value} {calculo.militar.nome}", 18),
+            (col_x[1], y, "Dependentes:", dep, 24),
+            (col_x[2], y, "Hab. abertura:", self._habilitacao_curta(calculo), 28),
             (
-                ("Militar:", f"{calculo.militar.posto.value} {calculo.militar.nome}", 21, 160),
-                ("Dependentes:", dep, 25, 75),
+                col_x[0],
+                y + line_h,
+                "Hab. encerramento:",
+                self._habilitacao_curta(calculo, encerramento=True),
+                36,
             ),
-            (
-                ("Hab. abertura:", self._habilitacao_curta(calculo), 29, 111),
-                (
-                    "Hab. encerramento:",
-                    self._habilitacao_curta(calculo, encerramento=True),
-                    36,
-                    105,
-                ),
-            ),
-            (
-                ("Comp. org. abertura:", comp_abertura, 42, 98),
-                ("Comp. org. encerramento:", comp_encerramento, 49, 92),
-            ),
+            (col_x[1], y + line_h, "Comp. org. abertura:", comp_abertura, 39),
+            (col_x[2], y + line_h, "Comp. org. encerramento:", comp_encerramento, 45),
         ]
-        for row in rows:
-            for label, value, label_w, value_w in row:
-                self.apply_font(8, bold=True)
-                self.cell(label_w, line_h, label, border=1)
-                self.apply_font(8)
-                self.cell(value_w, line_h, value, border=1)
-            self.ln(line_h)
-        self.ln(1.5)
+        for x, y_pos, label, value, label_w in fields:
+            self.set_xy(x, y_pos)
+            self.apply_font(8, bold=True)
+            self.cell(label_w, line_h, label)
+            self.apply_font(8)
+            self.cell(0, line_h, value)
+
+        self.set_y(y + line_h * 2 + 2)
 
     def _base_linhas(self, base: BaseRemuneratoria) -> list[tuple[str, Decimal]]:
         linhas: list[tuple[str, Decimal]] = [
