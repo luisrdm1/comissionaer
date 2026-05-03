@@ -5,7 +5,9 @@ para cada entrada. Execute com `uv run python migrate_v3.py`.
 """
 
 import sys
+from collections.abc import Mapping
 from pathlib import Path
+from typing import cast
 
 import yaml
 
@@ -294,7 +296,10 @@ LOOKUP: dict[str, tuple[str, str, str | None]] = {
         "Tapio Sentinel",
         "Fase Rescue",
     ),
-    "operacao-thor-fx-2-026-06-02-2026-com-semana-de-reserva-09-02-2026-a-13-02-2026-periodo-2-p2-2026-09-14": (
+    (
+        "operacao-thor-fx-2-026-06-02-2026-com-semana-de-reserva-"
+        "09-02-2026-a-13-02-2026-periodo-2-p2-2026-09-14"
+    ): (
         "OPERACAO",
         "Thor FX-2",
         "Período 2 (P2)",
@@ -307,7 +312,10 @@ LOOKUP: dict[str, tuple[str, str, str | None]] = {
     "sarex-2026-1-2026-09-21": ("EXCON", "SAREX", "Única"),
     "operacoes-aeromoveis-1-2026-09-27": ("OPERACAO", "Aeromóveis", None),
     "operacao-iris-2026-e-fase-2-2026-09-28": ("OPERACAO", "Iris 2026", "Fase 2"),
-    "operacao-thor-fx-2-02-2026-a-13-02-2026-periodo-2-p2-14-09-2026-25-09-2026-com-semana-reserva-2026-09-28": (
+    (
+        "operacao-thor-fx-2-02-2026-a-13-02-2026-periodo-2-p2-"
+        "14-09-2026-25-09-2026-com-semana-reserva-2026-09-28"
+    ): (
         "OPERACAO",
         "Thor FX-2",
         "Período 2 (P2) – Semana de Reserva",
@@ -360,8 +368,26 @@ LOOKUP: dict[str, tuple[str, str, str | None]] = {
 }
 
 
-def migrar_missao(m: dict) -> dict:  # type: ignore[type-arg]
-    missao_id = m["id"]
+def _mapping_to_dict(raw: object, label: str) -> dict[str, object]:
+    if not isinstance(raw, Mapping):
+        raise TypeError(f"{label} deve ser um mapeamento.")
+    source = cast(Mapping[object, object], raw)
+    return {str(k): v for k, v in source.items()}
+
+
+def _missoes_from_data(data: dict[str, object]) -> list[dict[str, object]]:
+    raw_missoes = data.get("missoes")
+    if not isinstance(raw_missoes, list):
+        raise TypeError("Campo 'missoes' deve ser uma lista.")
+    source = cast(list[object], raw_missoes)
+    return [_mapping_to_dict(item, "Cada missão") for item in source]
+
+
+def migrar_missao(m: dict[str, object]) -> dict[str, object]:
+    missao_id_raw = m.get("id")
+    if not isinstance(missao_id_raw, str):
+        raise TypeError("Missão sem id textual.")
+    missao_id = missao_id_raw
     if missao_id not in LOOKUP:
         print(f"ERRO: id sem entrada no lookup: {missao_id}", file=sys.stderr)
         sys.exit(1)
@@ -369,7 +395,7 @@ def migrar_missao(m: dict) -> dict:  # type: ignore[type-arg]
     tipo, nome, fase = LOOKUP[missao_id]
 
     # dict em Python 3.7+ preserva ordem de inserção
-    novo: dict = {}  # type: ignore[type-arg]
+    novo: dict[str, object] = {}
     novo["id"] = missao_id
     novo["tipo"] = tipo
     novo["nome"] = nome
@@ -384,11 +410,13 @@ def migrar_missao(m: dict) -> dict:  # type: ignore[type-arg]
 def main() -> None:
     yaml_path = Path("comissionaer/data/missoes_ica_55_87_2026.yaml")
     with yaml_path.open(encoding="utf-8") as f:
-        data = yaml.safe_load(f)
+        data = _mapping_to_dict(yaml.safe_load(f), "YAML raiz")
 
-    total = len(data["missoes"])
+    missoes = _missoes_from_data(data)
+    total = len(missoes)
     data["schema_version"] = 3
-    data["missoes"] = [migrar_missao(m) for m in data["missoes"]]
+    missoes_migradas = [migrar_missao(m) for m in missoes]
+    data["missoes"] = missoes_migradas
 
     with yaml_path.open("w", encoding="utf-8", newline="\n") as f:
         yaml.dump(
@@ -402,7 +430,7 @@ def main() -> None:
 
     print(f"OK — {total} missões migradas para schema_version 3.")
     print("Verificando lookup completo...")
-    ids_yaml = {m["id"] for m in yaml.safe_load(yaml_path.read_text(encoding="utf-8"))["missoes"]}
+    ids_yaml = {str(m["id"]) for m in missoes_migradas}
     ids_lookup = set(LOOKUP.keys())
     extra = ids_lookup - ids_yaml
     faltam = ids_yaml - ids_lookup

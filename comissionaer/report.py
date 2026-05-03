@@ -114,6 +114,9 @@ class _RelatorioPDF(FPDF):
         dep = "Sim" if calculo.militar.dependentes.value else "Não"
         comp_abertura = _cotas(calculo.militar.pct_compensacao_organica)
         comp_encerramento = _cotas(self._pct_comp_encerramento(calculo))
+        posto_encerramento = calculo.militar.posto_encerramento or calculo.militar.posto
+        hab_encerramento = self._habilitacao_curta(calculo, encerramento=True)
+        encerramento = f"{posto_encerramento.value} / {hab_encerramento}"
 
         col_x = (11.0, 104.0, 197.0)
         y = self.get_y()
@@ -128,8 +131,8 @@ class _RelatorioPDF(FPDF):
             (
                 col_x[2],
                 y + line_h,
-                "Hab. encerramento:",
-                self._habilitacao_curta(calculo, encerramento=True),
+                "Encerramento:",
+                encerramento,
                 35,
             ),
             (col_x[0], y + line_h * 2, "Comp. org. abertura:", comp_abertura, 45),
@@ -384,17 +387,20 @@ class _RelatorioPDF(FPDF):
         self.ln(6)
 
     def render_assinatura(self) -> None:
-        self.set_xy(183, 174)
+        assinatura_w = 75
+        assinatura_x = _PAGE_W + self.l_margin - assinatura_w
+
+        y = 176
+        self.set_draw_color(0, 0, 0)
+        self.line(assinatura_x, y, assinatura_x + assinatura_w, y)
+        self.set_xy(assinatura_x, y + 2)
+        self.set_x(assinatura_x)
         self.apply_font(9)
-        self.cell(95, 5, "____________________________", align="C")
+        self.cell(assinatura_w, 5, DIRETOR_NOME, align="C")
         self.ln(5)
-        self.set_x(183)
+        self.set_x(assinatura_x)
         self.apply_font(9)
-        self.cell(95, 5, DIRETOR_NOME, align="C")
-        self.ln(5)
-        self.set_x(183)
-        self.apply_font(9)
-        self.cell(95, 5, DIRETOR_CARGO, align="C")
+        self.cell(assinatura_w, 5, DIRETOR_CARGO, align="C")
 
     # ------------------------------------------------------------------
     # Cabeçalho e rodapé de página

@@ -35,6 +35,7 @@ Nunca chamar `.venv\Scripts\...` diretamente.
 - Python 3.14, uv, pyright strict, ruff
 - fpdf2 para PDF, odfdo para ODS, PyYAML para YAML
 - Decimal para todos os valores monetários (nunca float)
+- Nunca usar `Any`
 
 ## Regras de cálculo
 
