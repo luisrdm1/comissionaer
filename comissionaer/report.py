@@ -111,38 +111,37 @@ class _RelatorioPDF(FPDF):
         self.section_header("DADOS DO MILITAR")
 
         dep = "Sim" if calculo.militar.dependentes.value else "Não"
-        fator_total = calculo.fator_ida + calculo.fator_volta
         comp_abertura = _cotas(calculo.militar.pct_compensacao_organica)
         comp_encerramento = _cotas(self._pct_comp_encerramento(calculo))
 
-        self.info_pair("Militar:", f"{calculo.militar.posto.value} {calculo.militar.nome}", 21, 93)
-        self.info_pair("Dependentes:", dep, 25, 25)
-        ajuda_custo = (
-            f"{fator_total}x total "
-            f"({calculo.fator_ida}x abertura + {calculo.fator_volta}x encerramento)"
-        )
-        self.info_pair(
-            "Ajuda de custo:",
-            ajuda_custo,
-            29,
-            88,
-        )
-        self.ln(4.8)
-
-        self.info_pair("Hab. abertura:", self._habilitacao_curta(calculo), 29, 112)
-        self.info_pair(
-            "Hab. encerramento:", self._habilitacao_curta(calculo, encerramento=True), 34, 106
-        )
-        self.ln(4.8)
-
-        self.info_pair("Comp. org. abertura:", comp_abertura, 39, 100)
-        self.info_pair(
-            "Comp. org. encerramento:",
-            comp_encerramento,
-            47,
-            95,
-        )
-        self.ln(6)
+        line_h = 4.8
+        rows = [
+            (
+                ("Militar:", f"{calculo.militar.posto.value} {calculo.militar.nome}", 21, 160),
+                ("Dependentes:", dep, 25, 75),
+            ),
+            (
+                ("Hab. abertura:", self._habilitacao_curta(calculo), 29, 111),
+                (
+                    "Hab. encerramento:",
+                    self._habilitacao_curta(calculo, encerramento=True),
+                    36,
+                    105,
+                ),
+            ),
+            (
+                ("Comp. org. abertura:", comp_abertura, 42, 98),
+                ("Comp. org. encerramento:", comp_encerramento, 49, 92),
+            ),
+        ]
+        for row in rows:
+            for label, value, label_w, value_w in row:
+                self.apply_font(8, bold=True)
+                self.cell(label_w, line_h, label, border=1)
+                self.apply_font(8)
+                self.cell(value_w, line_h, value, border=1)
+            self.ln(line_h)
+        self.ln(1.5)
 
     def _base_linhas(self, base: BaseRemuneratoria) -> list[tuple[str, Decimal]]:
         linhas: list[tuple[str, Decimal]] = [
@@ -277,7 +276,9 @@ class _RelatorioPDF(FPDF):
             border=1,
             align="R",
         )
-        self.ln(6)
+        self.ln()
+
+        self.ln(1.5)
 
     def _fit_text(self, text: str, width: float) -> str:
         """Trunca o texto para caber em `width` mm na fonte atual."""
