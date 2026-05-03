@@ -1,7 +1,8 @@
 """Modelos de domínio: enums, dataclasses e cálculos de propriedade."""
 
+import calendar
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from enum import Enum
 
@@ -65,14 +66,55 @@ class CategoriaDiaria(Enum):
     PADRAO = "Demais municípios"
 
 
-class DuracaoComissionamento(Enum):
-    CURTO = "15 dias a 3 meses"
-    LONGO = "Acima de 3 meses até 12 meses"
+class FaixaAjudaCusto(Enum):
+    SEM_DESLIGAMENTO_ATE_15_DIAS = "Comissão sem desligamento até 15 dias"
+    SEM_DESLIGAMENTO_15_DIAS_A_3_MESES = (
+        "Comissão sem desligamento superior a 15 dias e até 3 meses"
+    )
+    SEM_DESLIGAMENTO_ACIMA_3_MESES = "Comissão sem desligamento superior a 3 meses"
 
 
 class Dependentes(Enum):
     SIM = True
     NAO = False
+
+
+_ORDEM_PROMOCAO: tuple[Posto, ...] = (
+    Posto.SOLDADO,
+    Posto.CABO,
+    Posto.TERCEIRO_SARGENTO,
+    Posto.SEGUNDO_SARGENTO,
+    Posto.PRIMEIRO_SARGENTO,
+    Posto.SUBOFICIAL,
+    Posto.SEGUNDO_TENENTE,
+    Posto.PRIMEIRO_TENENTE,
+    Posto.CAPITAO,
+    Posto.MAJOR,
+    Posto.TENENTE_CORONEL,
+    Posto.CORONEL,
+    Posto.BRIGADEIRO,
+    Posto.MAJOR_BRIGADEIRO,
+    Posto.TENENTE_BRIGADEIRO,
+)
+
+
+def proximo_posto(posto: Posto) -> Posto | None:
+    indice = _ORDEM_PROMOCAO.index(posto)
+    if indice == len(_ORDEM_PROMOCAO) - 1:
+        return None
+    return _ORDEM_PROMOCAO[indice + 1]
+
+
+def _somar_meses(inicio: date, meses: int) -> date:
+    month_index = inicio.month - 1 + meses
+    year = inicio.year + month_index // 12
+    month = month_index % 12 + 1
+    day = min(inicio.day, calendar.monthrange(year, month)[1])
+    return date(year, month, day)
+
+
+def _limite_meses_inclusivo(inicio: date, meses: int) -> date:
+    return _somar_meses(inicio, meses) - timedelta(days=1)
 
 
 @dataclass
@@ -85,6 +127,41 @@ class Missao:
     data_inicio: date
     data_termino: date
     num_deslocamentos: int = 1
+
+
+def dias_missoes(missoes: list[Missao]) -> int:
+    return sum(((missao.data_termino - missao.data_inicio).days + 1 for missao in missoes), 0)
+
+
+def periodo_missoes(missoes: list[Missao]) -> tuple[date, date]:
+    if not missoes:
+        raise ValueError("Não há missões para derivar o período do comissionamento.")
+    for missao in missoes:
+        if missao.data_termino < missao.data_inicio:
+            raise ValueError("Missão com data de término anterior ao início.")
+    return (
+        min(missao.data_inicio for missao in missoes),
+        max(missao.data_termino for missao in missoes),
+    )
+
+
+def dias_periodo(inicio: date, termino: date) -> int:
+    return (termino - inicio).days + 1
+
+
+def classificar_ajuda_custo(inicio: date, termino: date) -> FaixaAjudaCusto:
+    if termino < inicio:
+        raise ValueError("Data de término do comissionamento anterior ao início.")
+    if dias_periodo(inicio, termino) <= 15:
+        return FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
+    if termino <= _limite_meses_inclusivo(inicio, 3):
+        return FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
+    return FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
+
+
+def classificar_ajuda_custo_missoes(missoes: list[Missao]) -> FaixaAjudaCusto:
+    inicio, termino = periodo_missoes(missoes)
+    return classificar_ajuda_custo(inicio, termino)
 
 
 @dataclass
@@ -113,12 +190,22 @@ class Militar:
     habilitacao: Habilitacao
     dependentes: Dependentes
     pct_compensacao_organica: Decimal  # 0 se não aplicável
-    duracao: DuracaoComissionamento = DuracaoComissionamento.LONGO
+    data_inicio_comissionamento: date | None = None
+    data_termino_comissionamento: date | None = None
     # Situação no encerramento — preencher só se houver promoção ou nova habilitação
     # (Decreto 4.307/2002 art. 56: ajuda de volta usa remuneração da data de encerramento)
     posto_encerramento: Posto | None = None
     habilitacao_encerramento: Habilitacao | None = None
     pct_compensacao_organica_encerramento: Decimal | None = None
+
+    @property
+    def faixa_ajuda_custo(self) -> FaixaAjudaCusto:
+        if self.data_inicio_comissionamento is None or self.data_termino_comissionamento is None:
+            raise ValueError("Período do comissionamento não foi definido.")
+        return classificar_ajuda_custo(
+            self.data_inicio_comissionamento,
+            self.data_termino_comissionamento,
+        )
 
 
 @dataclass

@@ -12,7 +12,6 @@ import yaml
 from comissionaer.models import (
     CategoriaDiaria,
     Dependentes,
-    DuracaoComissionamento,
     Habilitacao,
     Militar,
     Missao,
@@ -27,7 +26,12 @@ def _militar_to_dict(m: Militar) -> dict[str, Any]:
         "habilitacao": m.habilitacao.name,
         "dependentes": m.dependentes == Dependentes.SIM,
         "pct_compensacao_organica": str(m.pct_compensacao_organica),
-        "duracao": m.duracao.name,
+        "data_inicio_comissionamento": (
+            m.data_inicio_comissionamento.isoformat() if m.data_inicio_comissionamento else None
+        ),
+        "data_termino_comissionamento": (
+            m.data_termino_comissionamento.isoformat() if m.data_termino_comissionamento else None
+        ),
         "posto_encerramento": m.posto_encerramento.name if m.posto_encerramento else None,
         "habilitacao_encerramento": (
             m.habilitacao_encerramento.name if m.habilitacao_encerramento else None
@@ -74,13 +78,20 @@ def salvar_yaml(
 
 
 def _dict_to_militar(d: dict[str, Any]) -> Militar:
+    data_inicio = d.get("data_inicio_comissionamento")
+    data_termino = d.get("data_termino_comissionamento")
     return Militar(
         nome=str(d["nome"]),
         posto=Posto[str(d["posto"])],
         habilitacao=Habilitacao[str(d["habilitacao"])],
         dependentes=Dependentes.SIM if d["dependentes"] else Dependentes.NAO,
         pct_compensacao_organica=Decimal(str(d["pct_compensacao_organica"])),
-        duracao=DuracaoComissionamento[str(d["duracao"])],
+        data_inicio_comissionamento=(
+            date.fromisoformat(str(data_inicio)) if data_inicio is not None else None
+        ),
+        data_termino_comissionamento=(
+            date.fromisoformat(str(data_termino)) if data_termino is not None else None
+        ),
         posto_encerramento=(
             Posto[str(d["posto_encerramento"])] if d.get("posto_encerramento") else None
         ),

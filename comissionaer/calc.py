@@ -10,28 +10,41 @@ from comissionaer.models import (
     BaseRemuneratoria,
     Calculo,
     Dependentes,
-    DuracaoComissionamento,
+    FaixaAjudaCusto,
     Habilitacao,
     Militar,
     Missao,
     Posto,
     ResultadoMissao,
+    classificar_ajuda_custo,
+    periodo_missoes,
 )
 
-# Fator de ida (base abertura) por (duração, dependentes) — MP 2.215-10/2001 + Lei 13.954/2019
-_FATOR_IDA: dict[tuple[DuracaoComissionamento, Dependentes], Decimal] = {
-    (DuracaoComissionamento.CURTO, Dependentes.SIM): Decimal("1"),
-    (DuracaoComissionamento.CURTO, Dependentes.NAO): Decimal("0.5"),
-    (DuracaoComissionamento.LONGO, Dependentes.SIM): Decimal("2"),
-    (DuracaoComissionamento.LONGO, Dependentes.NAO): Decimal("1"),
-}
-
-# Fator de volta (base encerramento) por (duração, dependentes)
-_FATOR_VOLTA: dict[tuple[DuracaoComissionamento, Dependentes], Decimal] = {
-    (DuracaoComissionamento.CURTO, Dependentes.SIM): Decimal("1"),
-    (DuracaoComissionamento.CURTO, Dependentes.NAO): Decimal("0.5"),
-    (DuracaoComissionamento.LONGO, Dependentes.SIM): Decimal("1"),
-    (DuracaoComissionamento.LONGO, Dependentes.NAO): Decimal("0.5"),
+_FATORES_AJUDA_CUSTO: dict[tuple[FaixaAjudaCusto, Dependentes], tuple[Decimal, Decimal]] = {
+    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS, Dependentes.SIM): (
+        Decimal("0"),
+        Decimal("0"),
+    ),
+    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS, Dependentes.NAO): (
+        Decimal("0"),
+        Decimal("0"),
+    ),
+    (FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES, Dependentes.SIM): (
+        Decimal("1"),
+        Decimal("1"),
+    ),
+    (FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES, Dependentes.NAO): (
+        Decimal("0.5"),
+        Decimal("0.5"),
+    ),
+    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES, Dependentes.SIM): (
+        Decimal("2"),
+        Decimal("1"),
+    ),
+    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES, Dependentes.NAO): (
+        Decimal("1"),
+        Decimal("0.5"),
+    ),
 }
 
 
@@ -84,11 +97,25 @@ def calcular_missao(missao: Missao, posto: Posto) -> ResultadoMissao:
     )
 
 
+def fatores_ajuda_custo(
+    faixa: FaixaAjudaCusto,
+    dependentes: Dependentes,
+) -> tuple[Decimal, Decimal]:
+    fatores = _FATORES_AJUDA_CUSTO.get((faixa, dependentes))
+    if fatores is None:
+        raise ValueError(f"Sem enquadramento automático de ajuda de custo para: {faixa.value}.")
+    return fatores
+
+
 def calcular(militar: Militar, missoes: list[Missao]) -> Calculo:
+    inicio, termino = periodo_missoes(missoes)
+    faixa = classificar_ajuda_custo(inicio, termino)
+    militar.data_inicio_comissionamento = inicio
+    militar.data_termino_comissionamento = termino
+
     base = calcular_base(militar)
     base_enc = calcular_base_encerramento(militar)
-    fator_ida = _FATOR_IDA[(militar.duracao, militar.dependentes)]
-    fator_volta = _FATOR_VOLTA[(militar.duracao, militar.dependentes)]
+    fator_ida, fator_volta = fatores_ajuda_custo(faixa, militar.dependentes)
     return Calculo(
         militar=militar,
         base=base,

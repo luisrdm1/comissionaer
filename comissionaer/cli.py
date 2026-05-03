@@ -17,11 +17,15 @@ from comissionaer.catalogo_ica import (
 from comissionaer.models import (
     CategoriaDiaria,
     Dependentes,
-    DuracaoComissionamento,
     Habilitacao,
     Militar,
     Missao,
     Posto,
+    classificar_ajuda_custo,
+    dias_missoes,
+    dias_periodo,
+    periodo_missoes,
+    proximo_posto,
 )
 
 # ---------------------------------------------------------------------------
@@ -90,7 +94,10 @@ def _ask_year(message: str) -> int | None:
 def _ask_cotas_voo(message: str, default: int = 0) -> Decimal:
     """Pede número de cotas de voo (0–10) e retorna o percentual decimal (0 a 0.20)."""
     while True:
-        raw = _ask_text(f"{message} (0 a 10 cotas, cada cota = 2%):", default=str(default))
+        raw = _ask_text(
+            f"{message} (0 a 10 cotas, cada cota = 2%):",
+            default=str(default),
+        )
         try:
             value = int(raw)
             if value < 0 or value > 10:
@@ -116,7 +123,7 @@ def _coletar_militar() -> Militar:
     nome = _ask_text("Nome completo (sem abreviações):")
     while not nome:
         questionary.print("  Nome não pode ser vazio.", style="bold fg:red")
-        nome = _ask_text("Nome completo:")
+        nome = _ask_text("Nome completo (sem abreviações):")
 
     hab_label = _ask_select(
         "Habilitação (curso mais alto concluído):",
@@ -125,16 +132,8 @@ def _coletar_militar() -> Militar:
     habilitacao = next(h for h in Habilitacao if h.value == hab_label)
 
     dependentes = Dependentes.SIM if _ask_confirm("Possui dependentes?") else Dependentes.NAO
-
-    dur_label = _ask_select(
-        "Duração do comissionamento:",
-        choices=[d.value for d in DuracaoComissionamento],
-    )
-    duracao = next(d for d in DuracaoComissionamento if d.value == dur_label)
-
     pct_comp = _ask_cotas_voo("Cotas de voo (Comp. Orgânica) na abertura")
 
-    # Encerramento — promoção ou nova habilitação (Decreto 4.307/2002 art. 56)
     posto_enc: Posto | None = None
     hab_enc: Habilitacao | None = None
     pct_comp_enc: Decimal | None = None
@@ -145,15 +144,18 @@ def _coletar_militar() -> Militar:
     ):
         questionary.print("  — Situação no ENCERRAMENTO —", style="bold fg:yellow")
 
-        if _ask_confirm("  Mudará de posto no encerramento?", default=False):
-            posto_enc_label = _ask_select(
-                "  Posto no encerramento:", choices=[p.value for p in Posto]
-            )
-            posto_enc = next(p for p in Posto if p.value == posto_enc_label)
+        prox = proximo_posto(posto)
+        if prox is None:
+            questionary.print("  Posto atual não possui promoção superior no cadastro.")
+        elif _ask_confirm(
+            f"  Mudará de posto no encerramento? (se sim: {prox.value})", default=False
+        ):
+            posto_enc = prox
 
         if _ask_confirm("  Concluirá nova habilitação no encerramento?", default=False):
             hab_enc_label = _ask_select(
-                "  Habilitação no encerramento:", choices=[h.value for h in Habilitacao]
+                "  Habilitação no encerramento:",
+                choices=[h.value for h in Habilitacao],
             )
             hab_enc = next(h for h in Habilitacao if h.value == hab_enc_label)
 
@@ -168,10 +170,29 @@ def _coletar_militar() -> Militar:
         habilitacao=habilitacao,
         dependentes=dependentes,
         pct_compensacao_organica=pct_comp,
-        duracao=duracao,
         posto_encerramento=posto_enc,
         habilitacao_encerramento=hab_enc,
         pct_compensacao_organica_encerramento=pct_comp_enc,
+    )
+
+
+def _aplicar_periodo_comissionamento(militar: Militar, missoes: list[Missao]) -> None:
+    questionary.print("\n=== ENQUADRAMENTO DO COMISSIONAMENTO ===", style="bold")
+    inicio, termino = periodo_missoes(missoes)
+    faixa = classificar_ajuda_custo(inicio, termino)
+    dias_corridos = dias_periodo(inicio, termino)
+    militar.data_inicio_comissionamento = inicio
+    militar.data_termino_comissionamento = termino
+
+    questionary.print(
+        "  Período derivado das missões: "
+        f"{inicio.strftime('%d/%m/%Y')} a {termino.strftime('%d/%m/%Y')} "
+        f"({dias_corridos} dias corridos).",
+        style="bold fg:green",
+    )
+    questionary.print(
+        f"  Enquadramento de ajuda de custo: {faixa.value}.",
+        style="bold fg:green",
     )
 
 
@@ -285,12 +306,12 @@ def _coletar_missao_manual() -> Missao:
 
     inicio = _ask_date("  Data de início")
     termino = _ask_date("  Data de término")
-
     while termino < inicio:
         questionary.print("  Data de término anterior ao início.", style="bold fg:red")
         termino = _ask_date("  Data de término")
 
     num_desloc = _ask_int("  Número de deslocamentos:", default=1)
+
     return Missao(
         descricao=descricao,
         om_destino=om_destino,
@@ -311,7 +332,11 @@ def _coletar_missoes() -> list[Missao]:
         if missoes and not _ask_confirm("Adicionar mais uma missão?"):
             break
         if not missoes and not _ask_confirm("Adicionar missão?"):
-            break
+            questionary.print(
+                "  Informe pelo menos uma missão para derivar o período do comissionamento.",
+                style="bold fg:red",
+            )
+            continue
 
         questionary.print(f"\n  — Missão {len(missoes) + 1} —", style="bold fg:cyan")
         origem = _ask_select(
@@ -341,6 +366,12 @@ def coletar_dados() -> tuple[Militar, list[Missao], str]:
     """Ponto de entrada do fluxo interativo. Retorna (militar, missoes, caminho_pdf)."""
     militar = _coletar_militar()
     missoes = _coletar_missoes()
+    _aplicar_periodo_comissionamento(militar, missoes)
+
+    questionary.print(
+        f"\nTotal de dias em missões planejadas: {dias_missoes(missoes)}.",
+        style="bold fg:green",
+    )
     caminho = _pedir_nome_arquivo(militar.nome, militar.posto)
     return militar, missoes, caminho
 

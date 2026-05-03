@@ -8,7 +8,6 @@ from comissionaer.calc import calcular
 from comissionaer.models import (
     CategoriaDiaria,
     Dependentes,
-    DuracaoComissionamento,
     Habilitacao,
     Militar,
     Missao,
@@ -34,7 +33,6 @@ def test_pdf_com_abertura_e_encerramento_cabe_em_uma_pagina(tmp_path: Path) -> N
         habilitacao=Habilitacao.APERFEICOAMENTO,
         dependentes=Dependentes.SIM,
         pct_compensacao_organica=Decimal("0.20"),
-        duracao=DuracaoComissionamento.LONGO,
         habilitacao_encerramento=Habilitacao.ALTOS_II,
     )
     missoes = [
