@@ -11,6 +11,7 @@ from comissionaer.models import (
     Calculo,
     Dependentes,
     DuracaoComissionamento,
+    Habilitacao,
     Militar,
     Missao,
     Posto,
@@ -34,18 +35,26 @@ _FATOR_VOLTA: dict[tuple[DuracaoComissionamento, Dependentes], Decimal] = {
 }
 
 
-def calcular_base(militar: Militar) -> BaseRemuneratoria:
-    soldo = SOLDOS[militar.posto]
-    adic_hab = soldo * PERCENTUAIS[militar.habilitacao]
-    adic_mil = soldo * ADICIONAL_MILITAR[militar.posto]
-    adic_disp = soldo * ADICIONAL_DISPONIBILIDADE[militar.posto]
-    adic_comp = soldo * militar.pct_compensacao_organica
+def _calcular_base(posto: Posto, habilitacao: Habilitacao, pct_comp: Decimal) -> BaseRemuneratoria:
+    soldo = SOLDOS[posto]
+    adic_hab = soldo * PERCENTUAIS[habilitacao]
+    adic_mil = soldo * ADICIONAL_MILITAR[posto]
+    adic_disp = soldo * ADICIONAL_DISPONIBILIDADE[posto]
+    adic_comp = soldo * pct_comp
     return BaseRemuneratoria(
         soldo=soldo,
         adicional_habilitacao=adic_hab,
         adicional_militar=adic_mil,
         adicional_disponibilidade=adic_disp,
         adicional_compensacao_organica=adic_comp,
+    )
+
+
+def calcular_base(militar: Militar) -> BaseRemuneratoria:
+    return _calcular_base(
+        militar.posto,
+        militar.habilitacao,
+        militar.pct_compensacao_organica,
     )
 
 
@@ -58,18 +67,7 @@ def calcular_base_encerramento(militar: Militar) -> BaseRemuneratoria:
         if militar.pct_compensacao_organica_encerramento is not None
         else militar.pct_compensacao_organica
     )
-    soldo = SOLDOS[posto]
-    adic_hab = soldo * PERCENTUAIS[hab]
-    adic_mil = soldo * ADICIONAL_MILITAR[posto]
-    adic_disp = soldo * ADICIONAL_DISPONIBILIDADE[posto]
-    adic_comp = soldo * pct_comp
-    return BaseRemuneratoria(
-        soldo=soldo,
-        adicional_habilitacao=adic_hab,
-        adicional_militar=adic_mil,
-        adicional_disponibilidade=adic_disp,
-        adicional_compensacao_organica=adic_comp,
-    )
+    return _calcular_base(posto, hab, pct_comp)
 
 
 def calcular_missao(missao: Missao, posto: Posto) -> ResultadoMissao:

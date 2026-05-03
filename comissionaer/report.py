@@ -7,16 +7,17 @@ from pathlib import Path
 
 from fpdf import FPDF
 
+from comissionaer.data.habilitacoes import PERCENTUAIS
 from comissionaer.models import BaseRemuneratoria, Calculo, ResultadoMissao
 
 _FONT_PATH = Path("C:/Windows/Fonts/arial.ttf")
 _FONT_BOLD_PATH = Path("C:/Windows/Fonts/arialbd.ttf")
 
-# Larguras das colunas da tabela de missões (mm) — paisagem A4 = 267 mm úteis
-# Colunas fixas (Nº, Início, Término, Dias, Diárias, Total); descrição pega o restante.
-_PAGE_W = 267.0
-_COL_FIXED = (10.0, 23.0, 23.0, 14.0, 41.0, 41.0)
-_COL_DESCR = _PAGE_W - sum(_COL_FIXED)  # 115 mm
+# Larguras das colunas da tabela de missões (mm) — paisagem A4 = 281 mm úteis
+# Colunas fixas (Nº, OM, Início, Término, Dias, Diárias, Desloc., Total); descrição pega o restante.
+_PAGE_W = 281.0
+_COL_FIXED = (8.0, 18.0, 22.0, 22.0, 12.0, 32.0, 28.0, 34.0)
+_COL_DESCR = _PAGE_W - sum(_COL_FIXED)  # 105 mm
 _COL_W = (_COL_FIXED[0], _COL_DESCR, *_COL_FIXED[1:])
 
 
@@ -24,11 +25,22 @@ def _brl(value: Decimal) -> str:
     return f"R$ {value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+def _percent(value: Decimal) -> str:
+    pct = value * 100
+    return f"{pct:.0f}%" if pct == pct.to_integral() else f"{pct:.1f}%"
+
+
+def _cotas(value: Decimal) -> str:
+    cotas = value / Decimal("0.02")
+    cotas_text = f"{cotas:.0f}" if cotas == cotas.to_integral() else f"{cotas:.1f}"
+    return f"{cotas_text} cotas ({_percent(value)})"
+
+
 class _RelatorioPDF(FPDF):
     def __init__(self) -> None:
         super().__init__(orientation="L", unit="mm", format="A4")
-        self.set_auto_page_break(auto=True, margin=15)
-        self.set_margins(15, 15, 15)
+        self.set_auto_page_break(auto=False, margin=8)
+        self.set_margins(8, 8, 8)
         self._arial = _FONT_PATH.exists() and _FONT_BOLD_PATH.exists()
         if self._arial:
             self.add_font("Arial", fname=str(_FONT_PATH))
@@ -38,74 +50,101 @@ class _RelatorioPDF(FPDF):
     # Helpers internos
     # ------------------------------------------------------------------
 
-    def apply_font(self, size: int, bold: bool = False) -> None:
+    def apply_font(self, size: int, bold: bool = False, underline: bool = False) -> None:
+        style = ("B" if bold else "") + ("U" if underline else "")
         if self._arial:
-            self.set_font("Arial", style="B" if bold else "", size=size)
+            self.set_font("Arial", style=style, size=size)
         else:
-            self.set_font("Helvetica", style="B" if bold else "", size=size)
+            self.set_font("Helvetica", style=style, size=size)
 
     def section_header(self, title: str) -> None:
-        self.apply_font(11, bold=True)
+        self.apply_font(9, bold=True)
         self.set_fill_color(220, 230, 242)
-        self.cell(0, 7, f"  {title}", fill=True)
-        self.ln(8)
+        self.cell(0, 5, f"  {title}", fill=True)
+        self.ln(5.5)
 
     def kv_row(self, label: str, value: str, label_w: float = 80.0) -> None:
-        self.apply_font(10, bold=True)
-        self.cell(label_w, 6, label)
-        self.apply_font(10)
-        self.cell(0, 6, value)
-        self.ln(6)
+        self.apply_font(9, bold=True)
+        self.cell(label_w, 5, label)
+        self.apply_font(9)
+        self.cell(0, 5, value)
+        self.ln(5)
 
     def kv_row_right(self, label: str, value: str, label_w: float = 120.0) -> None:
-        self.apply_font(10)
-        self.cell(label_w, 6, label)
-        self.cell(0, 6, value, align="R")
-        self.ln(6)
+        self.apply_font(9)
+        self.cell(label_w, 5, label)
+        self.cell(0, 5, value, align="R")
+        self.ln(5)
+
+    def info_pair(self, label: str, value: str, label_w: float, value_w: float) -> None:
+        self.apply_font(8, bold=True)
+        self.cell(label_w, 4.6, label)
+        self.apply_font(8)
+        self.cell(value_w, 4.6, value)
 
     def separator(self) -> None:
         self.set_draw_color(100, 100, 100)
-        self.line(self.get_x(), self.get_y(), self.get_x() + 267, self.get_y())
-        self.ln(2)
+        self.line(self.get_x(), self.get_y(), self.get_x() + _PAGE_W, self.get_y())
+        self.ln(1.5)
 
     # ------------------------------------------------------------------
     # Seções
     # ------------------------------------------------------------------
 
+    def _habilitacao_curta(self, calculo: Calculo, encerramento: bool = False) -> str:
+        habilitacao = calculo.militar.habilitacao
+        if encerramento:
+            habilitacao = calculo.militar.habilitacao_encerramento or habilitacao
+        nome = habilitacao.value.split("—", maxsplit=1)[0].strip()
+        if "%" in nome:
+            return nome
+        return f"{nome} ({_percent(PERCENTUAIS[habilitacao])})"
+
+    def _pct_comp_encerramento(self, calculo: Calculo) -> Decimal:
+        return (
+            calculo.militar.pct_compensacao_organica_encerramento
+            if calculo.militar.pct_compensacao_organica_encerramento is not None
+            else calculo.militar.pct_compensacao_organica
+        )
+
     def render_identificacao(self, calculo: Calculo) -> None:
-        self.apply_font(13, bold=True)
-        self.cell(0, 8, "ANÁLISE DE ECONOMICIDADE — COMISSIONAMENTO", align="C")
-        self.ln(10)
-
-        self.kv_row("Militar:", f"{calculo.militar.posto.value}  {calculo.militar.nome}")
-
-        if calculo.mudanca_encerramento:
-            self.kv_row("Habilitação (abertura):", calculo.militar.habilitacao.value)
-            hab_enc = calculo.militar.habilitacao_encerramento or calculo.militar.habilitacao
-            posto_enc = calculo.militar.posto_encerramento
-            enc_value = hab_enc.value
-            if posto_enc is not None:
-                enc_value = f"{enc_value}  [{posto_enc.value}]"
-            self.kv_row("Habilitação (encerramento):", enc_value)
-        else:
-            self.kv_row("Habilitação:", calculo.militar.habilitacao.value)
+        self.section_header("DADOS DO MILITAR")
 
         dep = "Sim" if calculo.militar.dependentes.value else "Não"
         fator_total = calculo.fator_ida + calculo.fator_volta
-        self.apply_font(10, bold=True)
-        self.cell(80, 6, "Dependentes:")
-        self.apply_font(10)
-        self.cell(60, 6, dep)
-        self.apply_font(10, bold=True)
-        self.cell(50, 6, "Fator ajuda de custo:")
-        self.apply_font(10)
-        self.cell(0, 6, f"{fator_total}× ({calculo.fator_ida}× ida + {calculo.fator_volta}× volta)")
-        self.ln(10)
+        comp_abertura = _cotas(calculo.militar.pct_compensacao_organica)
+        comp_encerramento = _cotas(self._pct_comp_encerramento(calculo))
 
-    def render_base(self, base: BaseRemuneratoria, fator: Decimal, label: str = "") -> None:
-        header = "BASE REMUNERATÓRIA" + (f" — {label}" if label else "")
-        self.section_header(header)
+        self.info_pair("Militar:", f"{calculo.militar.posto.value} {calculo.militar.nome}", 21, 93)
+        self.info_pair("Dependentes:", dep, 25, 25)
+        ajuda_custo = (
+            f"{fator_total}x total "
+            f"({calculo.fator_ida}x abertura + {calculo.fator_volta}x encerramento)"
+        )
+        self.info_pair(
+            "Ajuda de custo:",
+            ajuda_custo,
+            29,
+            88,
+        )
+        self.ln(4.8)
 
+        self.info_pair("Hab. abertura:", self._habilitacao_curta(calculo), 29, 112)
+        self.info_pair(
+            "Hab. encerramento:", self._habilitacao_curta(calculo, encerramento=True), 34, 106
+        )
+        self.ln(4.8)
+
+        self.info_pair("Comp. org. abertura:", comp_abertura, 39, 100)
+        self.info_pair(
+            "Comp. org. encerramento:",
+            comp_encerramento,
+            47,
+            95,
+        )
+        self.ln(6)
+
+    def _base_linhas(self, base: BaseRemuneratoria) -> list[tuple[str, Decimal]]:
         linhas: list[tuple[str, Decimal]] = [
             ("Soldo militar da ativa", base.soldo),
             ("Adicional de habilitação", base.adicional_habilitacao),
@@ -114,23 +153,131 @@ class _RelatorioPDF(FPDF):
         ]
         if base.adicional_compensacao_organica > 0:
             linhas.append(
-                ("Adicional de compensação orgânica", base.adicional_compensacao_organica)
+                (
+                    "Adicional de compensação orgânica (cotas de voo)",
+                    base.adicional_compensacao_organica,
+                )
             )
+        return linhas
 
-        for descr, valor in linhas:
-            self.kv_row_right(descr, _brl(valor))
+    def render_base(self, base: BaseRemuneratoria, fator: Decimal, label: str = "") -> None:
+        header = "BASE REMUNERATÓRIA" + (f" — {label}" if label else "")
+        self.section_header(header)
 
-        self.separator()
+        line_h = 4.6
+        descr_w = 195.0
+        valor_w = _PAGE_W - descr_w
+        self.set_fill_color(180, 200, 225)
+        self.apply_font(8, bold=True)
+        self.cell(descr_w, line_h, "Rubrica", border=1, fill=True, align="C")
+        self.cell(valor_w, line_h, "Valor", border=1, fill=True, align="C")
+        self.ln()
 
-        self.apply_font(10, bold=True)
-        self.cell(120, 6, "Total da base remuneratória")
-        self.cell(0, 6, _brl(base.total), align="R")
+        for descr, valor in self._base_linhas(base):
+            self.apply_font(8)
+            self.cell(descr_w, line_h, descr, border=1)
+            self.cell(valor_w, line_h, _brl(valor), border=1, align="R")
+            self.ln()
+
+        self.apply_font(8, bold=True)
+        self.cell(descr_w, line_h, "Total da base remuneratória", border=1)
+        self.cell(valor_w, line_h, _brl(base.total), border=1, align="R")
+        self.ln()
+
+        self.cell(descr_w, line_h, f"Ajuda de custo ({fator}× base)", border=1)
+        self.cell(valor_w, line_h, _brl(base.total * fator), border=1, align="R")
         self.ln(6)
 
-        self.apply_font(10, bold=True)
-        self.cell(120, 6, f"Ajuda de custo ({fator}× base)")
-        self.cell(0, 6, _brl(base.total * fator), align="R")
-        self.ln(10)
+    def render_bases(self, calculo: Calculo) -> None:
+        if not calculo.mudanca_encerramento:
+            self.render_base(calculo.base, calculo.fator_ida + calculo.fator_volta)
+            return
+
+        self.section_header("BASE REMUNERATÓRIA — ABERTURA X ENCERRAMENTO")
+        line_h = 4.6
+        descr_w = 117.0
+        abertura_w = 82.0
+        encerramento_w = _PAGE_W - descr_w - abertura_w
+        self.set_fill_color(180, 200, 225)
+        self.apply_font(8, bold=True)
+        self.cell(descr_w, line_h, "Rubrica", border=1, fill=True, align="C")
+        self.cell(
+            abertura_w,
+            line_h,
+            f"Abertura ({calculo.fator_ida}x)",
+            border=1,
+            fill=True,
+            align="C",
+        )
+        self.cell(
+            encerramento_w,
+            line_h,
+            f"Encerramento ({calculo.fator_volta}x)",
+            border=1,
+            fill=True,
+            align="C",
+        )
+        self.ln()
+
+        linhas_abertura = self._base_linhas(calculo.base)
+        linhas_encerramento = self._base_linhas(calculo.base_encerramento)
+        for (descr, valor_abertura), (_, valor_encerramento) in zip(
+            linhas_abertura, linhas_encerramento, strict=True
+        ):
+            self.apply_font(8)
+            self.cell(descr_w, line_h, descr, border=1)
+            self.cell(abertura_w, line_h, _brl(valor_abertura), border=1, align="R")
+            self.cell(encerramento_w, line_h, _brl(valor_encerramento), border=1, align="R")
+            self.ln()
+
+        self.apply_font(8, bold=True)
+        self.cell(descr_w, line_h, "Compensação orgânica (cotas de voo)", border=1)
+        self.cell(
+            abertura_w,
+            line_h,
+            _cotas(calculo.militar.pct_compensacao_organica),
+            border=1,
+            align="R",
+        )
+        self.cell(
+            encerramento_w,
+            line_h,
+            _cotas(self._pct_comp_encerramento(calculo)),
+            border=1,
+            align="R",
+        )
+        self.ln()
+
+        self.apply_font(8, bold=True)
+        self.cell(descr_w, line_h, "Total da base remuneratória", border=1)
+        self.cell(abertura_w, line_h, _brl(calculo.base.total), border=1, align="R")
+        self.cell(
+            encerramento_w,
+            line_h,
+            _brl(calculo.base_encerramento.total),
+            border=1,
+            align="R",
+        )
+        self.ln()
+
+        ajuda_ida = calculo.base.total * calculo.fator_ida
+        ajuda_volta = calculo.base_encerramento.total * calculo.fator_volta
+        self.cell(descr_w, line_h, "Ajuda de custo", border=1)
+        self.cell(
+            abertura_w,
+            line_h,
+            f"{calculo.fator_ida}x = {_brl(ajuda_ida)}",
+            border=1,
+            align="R",
+        )
+        self.cell(
+            encerramento_w,
+            line_h,
+            f"{calculo.fator_volta}x = {_brl(ajuda_volta)}",
+            border=1,
+            align="R",
+        )
+        self.ln(6)
 
     def _fit_text(self, text: str, width: float) -> str:
         """Trunca o texto para caber em `width` mm na fonte atual."""
@@ -143,114 +290,136 @@ class _RelatorioPDF(FPDF):
     def render_missoes(self, missoes: list[ResultadoMissao]) -> None:
         self.section_header("MISSÕES")
 
-        line_h = 5.5
-        headers = ["Nº", "Descrição / OM", "Início", "Término", "Dias", "Diárias", "Total"]
+        line_h = 4.7
+        headers = [
+            "Nº",
+            "Missão e local de realização do serviço",
+            "OM",
+            "Início",
+            "Término",
+            "Dias",
+            "Diárias",
+            "Desloc.",
+            "Total",
+        ]
         self.set_fill_color(180, 200, 225)
         for i, h in enumerate(headers):
-            self.apply_font(8, bold=True)
+            self.apply_font(7, bold=True)
             self.cell(_COL_W[i], line_h, h, border=1, fill=True, align="C")
         self.ln()
 
         for idx, rm in enumerate(missoes, start=1):
-            self.apply_font(8)
-            descr_full = f"{rm.missao.descricao}  [{rm.missao.om_destino}]"
+            self.apply_font(7)
+            descr_full = f"{rm.missao.descricao} - {rm.missao.cidade}/{rm.missao.uf}"
             descr = self._fit_text(descr_full, _COL_W[1] - 2)
             row: list[tuple[float, str, str]] = [
                 (_COL_W[0], str(idx), "C"),
                 (_COL_W[1], descr, "L"),
-                (_COL_W[2], rm.missao.data_inicio.strftime("%d/%m/%Y"), "C"),
-                (_COL_W[3], rm.missao.data_termino.strftime("%d/%m/%Y"), "C"),
-                (_COL_W[4], str(rm.dias), "C"),
-                (_COL_W[5], _brl(rm.total_diarias), "R"),
-                (_COL_W[6], _brl(rm.total), "R"),
+                (_COL_W[2], rm.missao.om_destino, "C"),
+                (_COL_W[3], rm.missao.data_inicio.strftime("%d/%m/%Y"), "C"),
+                (_COL_W[4], rm.missao.data_termino.strftime("%d/%m/%Y"), "C"),
+                (_COL_W[5], str(rm.dias), "C"),
+                (_COL_W[6], _brl(rm.total_diarias), "R"),
+                (_COL_W[7], _brl(rm.total_deslocamento), "R"),
+                (_COL_W[8], _brl(rm.total), "R"),
             ]
             fill = idx % 2 == 0
             self.set_fill_color(240, 245, 252)
             for w, txt, align in row:
-                self.apply_font(8)
+                self.apply_font(7)
                 self.cell(w, line_h, txt, border=1, fill=fill, align=align)  # type: ignore[arg-type]
             self.ln()
 
-        self.ln(4)
-
-    def render_resumo(self, calculo: Calculo) -> None:
-        self.section_header("RESUMO")
-
-        linhas: list[tuple[str, str]] = [
-            ("Total de dias fora de sede", f"{calculo.total_dias} dias"),
-            ("Total de diárias", _brl(calculo.total_diarias)),
-            ("Total de deslocamentos", _brl(calculo.total_deslocamentos)),
-            ("Total de custo em missões", _brl(calculo.total_missoes)),
-        ]
-        if calculo.mudanca_encerramento:
-            linhas += [
-                (
-                    f"  Ajuda de custo ida ({calculo.fator_ida}× base abertura)",
-                    _brl(calculo.base.total * calculo.fator_ida),
-                ),
-                (
-                    f"  Ajuda de custo volta ({calculo.fator_volta}× base encerramento)",
-                    _brl(calculo.base_encerramento.total * calculo.fator_volta),
-                ),
-            ]
-        linhas.append(("Ajuda de custo (comparativo)", _brl(calculo.total_ajuda_custo)))
-
-        for descr, valor in linhas:
-            self.kv_row_right(descr, valor)
-
-        self.ln(2)
-        self.separator()
-
-        econ = calculo.economicidade
-        cor: tuple[int, int, int] = (0, 120, 0) if econ >= 0 else (180, 0, 0)
-        self.set_text_color(*cor)
-        self.apply_font(12, bold=True)
-        label = (
-            "ECONOMICIDADE (comissionamento justificado)"
-            if econ >= 0
-            else "DÉFICIT (missões insuficientes)"
+        self.apply_font(7, bold=True)
+        self.cell(
+            _COL_W[0] + _COL_W[1] + _COL_W[2] + _COL_W[3] + _COL_W[4],
+            line_h,
+            "TOTAIS",
+            border=1,
+            align="R",
         )
-        self.cell(160, 8, label)
-        self.cell(0, 8, _brl(abs(econ)), align="R")
-        self.set_text_color(0, 0, 0)
-        self.ln(10)
+        self.cell(_COL_W[5], line_h, str(sum((rm.dias for rm in missoes), 0)), border=1, align="C")
+        self.cell(
+            _COL_W[6],
+            line_h,
+            _brl(sum((rm.total_diarias for rm in missoes), Decimal("0"))),
+            border=1,
+            align="R",
+        )
+        self.cell(
+            _COL_W[7],
+            line_h,
+            _brl(sum((rm.total_deslocamento for rm in missoes), Decimal("0"))),
+            border=1,
+            align="R",
+        )
+        self.cell(
+            _COL_W[8],
+            line_h,
+            _brl(sum((rm.total for rm in missoes), Decimal("0"))),
+            border=1,
+            align="R",
+        )
+        self.ln()
+        self.ln(3)
 
-        if calculo.total_ajuda_custo > 0:
-            pct = calculo.total_missoes / calculo.total_ajuda_custo * 100
-            self.apply_font(9)
-            self.set_text_color(80, 80, 80)
-            if econ >= 0:
-                self.cell(
-                    0,
-                    6,
-                    f"O custo das missões ({pct:.1f}% da ajuda de custo) supera o comparativo, "
-                    f"justificando o comissionamento.",
-                )
-            else:
-                self.cell(
-                    0,
-                    6,
-                    f"O custo das missões representa apenas {pct:.1f}% da ajuda de custo. "
-                    f"São necessárias mais missões para justificar o comissionamento.",
-                )
-            self.set_text_color(0, 0, 0)
+    def render_comparativo(self, calculo: Calculo) -> None:
+        self.section_header("COMPARATIVO FINANCEIRO")
+
+        line_h = 5.0
+        label_w = 95.0
+        value_w = (_PAGE_W - label_w) / 3
+        diferenca = abs(calculo.total_ajuda_custo - calculo.total_missoes)
+        self.set_fill_color(180, 200, 225)
+        self.apply_font(8, bold=True)
+        for title in ("Item", "Ajuda de custo", "Diárias + desloc.", "Comparativo"):
+            w = label_w if title == "Item" else value_w
+            self.cell(w, line_h, title, border=1, fill=True, align="C")
+        self.ln()
+
+        self.apply_font(8)
+        self.cell(label_w, line_h, "Valores apurados", border=1)
+        self.cell(value_w, line_h, _brl(calculo.total_ajuda_custo), border=1, align="R")
+        self.cell(value_w, line_h, _brl(calculo.total_missoes), border=1, align="R")
+        self.cell(value_w, line_h, _brl(diferenca), border=1, align="R")
+        self.ln(6)
+
+    def render_assinatura(self) -> None:
+        self.set_xy(183, 174)
+        self.apply_font(9)
+        self.cell(95, 5, "____________________________", align="C")
+        self.ln(5)
+        self.set_x(183)
+        self.apply_font(9)
+        self.cell(95, 5, "DIRETOR_NOME_PRIVADO", align="C")
+        self.ln(5)
+        self.set_x(183)
+        self.apply_font(9)
+        self.cell(95, 5, "Diretor do IAOp", align="C")
 
     # ------------------------------------------------------------------
     # Cabeçalho e rodapé de página
     # ------------------------------------------------------------------
 
     def header(self) -> None:
-        self.apply_font(9)
-        self.set_text_color(130, 130, 130)
-        self.cell(0, 6, "COMANDO DA AERONÁUTICA — Análise de Comissionamento", align="C")
-        self.ln(8)
+        self.apply_font(10, bold=True)
+        self.cell(0, 4.5, "MINISTÉRIO DA DEFESA", align="C")
+        self.ln(4.5)
+        self.apply_font(10)
+        self.cell(0, 4.5, "COMANDO DA AERONÁUTICA", align="C")
+        self.ln(4.5)
+        self.cell(0, 4.5, "INSTITUTO DE APLICAÇÕES OPERACIONAIS", align="C")
+        self.ln(4.5)
+        self.apply_font(9, underline=True)
+        self.cell(0, 4.5, "Assunto: Solicitação de Abertura de Comissionamento", align="C")
+        self.ln(7)
         self.set_text_color(0, 0, 0)
 
     def footer(self) -> None:
-        self.set_y(-12)
-        self.apply_font(8)
+        self.set_y(-8)
+        self.apply_font(7)
         self.set_text_color(140, 140, 140)
-        self.cell(0, 6, f"Página {self.page_no()} / {{nb}}", align="C")
+        self.cell(0, 4, f"Página {self.page_no()} / {{nb}}", align="C")
         self.set_text_color(0, 0, 0)
 
 
@@ -260,12 +429,9 @@ def gerar_pdf(calculo: Calculo, caminho: str) -> None:
     pdf.add_page()
 
     pdf.render_identificacao(calculo)
-    if calculo.mudanca_encerramento:
-        pdf.render_base(calculo.base, calculo.fator_ida, "ABERTURA")
-        pdf.render_base(calculo.base_encerramento, calculo.fator_volta, "ENCERRAMENTO")
-    else:
-        pdf.render_base(calculo.base, calculo.fator_ida + calculo.fator_volta)
+    pdf.render_bases(calculo)
     pdf.render_missoes(calculo.missoes)
-    pdf.render_resumo(calculo)
+    pdf.render_comparativo(calculo)
+    pdf.render_assinatura()
 
     pdf.output(caminho)
