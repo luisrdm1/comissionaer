@@ -1,0 +1,2438 @@
+schema_version: 2
+documento:
+  titulo: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+  arquivo_origem: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026.pdf
+  paginas: 209
+  observacoes: Catalogo exaustivo preliminar extraido programaticamente com pdfplumber e curadoria automatica
+    de ICAO/OM.
+regras_catalogo:
+  datas_oficiais: Campos data_inicio_oficial/data_termino_oficial preservam o periodo de execucao da ICA.
+  datas_planejamento: Campos data_inicio_planejamento/data_termino_planejamento aplicam D-1 no inicio
+    para deslocamento; termino igual ao oficial.
+  fases: Fases/etapas com periodos proprios sao registradas como missoes separadas.
+  icao: local_desdobramento_icao armazena designativos ICAO de aerodromos/localidades, separado de OM.
+  om_destino: Inferida automaticamente quando o ICAO possui mapeamento explicito para base/OM FAB.
+mapeamento_icao_om:
+  SBAF: BAAF
+  SBAN: BAAN
+  SBBE: BABE
+  SBBR: BABR
+  SBBV: BABV
+  SBCG: BACG
+  SBCO: BACO
+  SBFL: BAFL
+  SBGL: BAGL
+  SBMN: BAMN
+  SBNT: BANT
+  SBSC: BASC
+  SBSM: BASM
+  SBYS: AFA
+  SBCC: CPBV
+missoes:
+- id: exercicio-tecnico-lancamento-aereo-kc-390-fase-1-2026-02-02
+  descricao: EXERCICIO TECNICO LANCAMENTO AEREO KC-390 - Fase 1
+  om_destino:
+  - BAAF
+  - BAAN
+  - BACG
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBAF
+  - SBAN
+  - SBCG
+  - SBGL
+  cidade: Rio de Janeiro / Anapolis / Campo Grande
+  uf: RJ / GO / MS
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-02-02'
+  data_termino_oficial: '2026-03-06'
+  data_inicio_planejamento: '2026-02-01'
+  data_termino_planejamento: '2026-03-06'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 50
+    trecho: 'EXERCICIO TECNICO LANCAMENTO AEREO KC-390; periodo: Fase 1: 02.02.26 a 06.03.26 (BAAF) Fase
+      2: 02.03.26 a 06.03.25 (BAAN) Fase 3: 02.03.26 a 06.03.25 (BAAF) Fase 4: 06.07.26 a 17.07.25 (BACG)
+      Fase 5: 17.08.26 a 28.08.26 (BAAF) Fase 6: 09.09.26 a 21.09.26 (BAAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: desfile-aereo-platinas-epcar-2026
+  descricao: Desfile Aereo - Entrega de Platinas do 1o Esquadrao
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Barbacena
+  uf: MG
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-02-06'
+  data_termino_oficial: '2026-02-06'
+  data_inicio_planejamento: '2026-02-05'
+  data_termino_planejamento: '2026-02-06'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 185
+    trecho: LOCAL Barbacena - MG DATA 06.02.26
+  confianca: media
+  observacoes: Registro de Portoes Abertos/Desfile Aereo extraido de quadro resumido.
+- id: operacao-thor-fx-2-periodo-1-p1-26-01-2026-06-02-2026-com-semana-de-reserva-2026-02-09
+  descricao: 'OPERACAO THOR FX-2 - Periodo 1 (P1): 26/01/2026 - 06//02/2026 com semana de reserva'
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: ''
+  uf: ''
+  categoria_diaria: ''
+  data_inicio_oficial: '2026-02-09'
+  data_termino_oficial: '2026-02-13'
+  data_inicio_planejamento: '2026-02-08'
+  data_termino_planejamento: '2026-02-13'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 124
+    trecho: 'OPERACAO THOR FX-2; periodo: Periodo 1 (P1): 26/01/2026 - 06//02/2026 com semana de reserva
+      09/02/2026 a 13/02/2026 Periodo 2 (P2): 14/09/2026 - 25/09/2026 com semana reserva 28/09/2026 -
+      10/10/2026; area: ; local: Base Aerea de Natal'
+  confianca: media
+  observacoes: ''
+- id: exercicio-operacional-tapio-sentinel-26-br-2026-02-10
+  descricao: EXERCICIO OPERACIONAL TAPIO SENTINEL - 26 (BR)
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-02-10'
+  data_termino_oficial: '2026-02-12'
+  data_inicio_planejamento: '2026-02-09'
+  data_termino_planejamento: '2026-02-12'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 37
+    trecho: 'EXERCICIO OPERACIONAL TAPIO SENTINEL; periodo: CDC - 30.09.2025 IPC - 09.02.26 (BR) 10A12.02.26
+      MPC - 11.05.26 (BR) 12.05.26 A 13.05.26 FPC - 29.06.26 (BR) 30.06.26 A 01.07.26 EXERCICIO: FASE
+      WARRIOR 14 A 28.08.2026 FASE RESCUE 11 A 25.09.2026; area: CAMPO GRA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-carp-do-fms-do-c-105-etapa-1-precursora-2026-02-22
+  descricao: AVAOP - CARP do FMS do C-105 - Etapa 1 (Precursora)
+  om_destino:
+  - BACG
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: IAOp, 1o/15o GAV e EAS
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-02-22'
+  data_termino_oficial: '2026-02-28'
+  data_inicio_planejamento: '2026-02-21'
+  data_termino_planejamento: '2026-02-28'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 154
+    trecho: 'AVAOP - CARP do FMS do C-105; periodo: Etapa 1 (Precursora) - 22.02.2026 a 28.02.2026 Etapa
+      2 (Execucao) - 19.04.2026 a 09.05.2026; area: CAMPO GRANDE - MS (Etapas 1 e 2); local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-ccdp-do-kc-390-etapa-1-precursora-2026-02-22
+  descricao: AVAOP - CCDP do KC-390 - Etapa 1 (Precursora)
+  om_destino:
+  - BACG
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: IAOp, 1o GTT e EAS
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-02-22'
+  data_termino_oficial: '2026-02-28'
+  data_inicio_planejamento: '2026-02-21'
+  data_termino_planejamento: '2026-02-28'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 152
+    trecho: 'AVAOP - CCDP do KC-390; periodo: Etapa 1 (Precursora) - 22.02.2026 a 28.02.2026 Etapa 2 (Execucao)
+      - 19.04.2026 a 09.05.2026; area: CAMPO GRANDE - MS (Etapas 1 e 2); local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-mx-15-do-r-99-etapa-1-precursora-2026-02-22
+  descricao: AVAOP - MX-15 do R-99 - Etapa 1 (Precursora)
+  om_destino:
+  - BAAN
+  om_diretora: IAOp
+  om_coordenadora: IAOp
+  om_executora: 2o/6o GAV e IAOp
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-02-22'
+  data_termino_oficial: '2026-02-28'
+  data_inicio_planejamento: '2026-02-21'
+  data_termino_planejamento: '2026-02-28'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 150
+    trecho: 'AVAOP - MX-15 do R-99; periodo: Etapa 1 (Precursora) - 22.02.2026 a 28.02.2026 Etapa 2 (Execucao)
+      - 19.04.2026 a 09.05.2026; area: ANAPOLIS - GO (Etapas 1 e 2); local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-cabra-da-peste-pceo-tr-fase-1-instrutores-2026-02-22
+  descricao: EXERCICIO TECNICO CABRA DA PESTE (PCEO-TR) - Fase 1 (INSTRUTORES)
+  om_destino:
+  - BAAF
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: 1/5 GAV e 2o ETA
+  local_desdobramento_icao:
+  - SBAF
+  - SBGW
+  cidade: Rio de Janeiro / Guaratingueta
+  uf: RJ / SP
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-02-22'
+  data_termino_oficial: '2026-03-14'
+  data_inicio_planejamento: '2026-02-21'
+  data_termino_planejamento: '2026-03-14'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 52
+    trecho: 'EXERCICIO TECNICO CABRA DA PESTE (PCEO-TR); periodo: Fase 1 (INSTRUTORES) - 22.02.26 a 14.03.26
+      Fase 2 (ESTAGIARIOS) - 04.09.26 a 03.10.26; area: RIO DE JANEIRO - RJ / GUARATINGUETA - SP; local:
+      SBAF / SBGW'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: avop-th-x-1-2026-02-23
+  descricao: AVOP TH-X
+  om_destino:
+  - BANT
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-02-23'
+  data_termino_oficial: '2026-03-13'
+  data_inicio_planejamento: '2026-02-22'
+  data_termino_planejamento: '2026-03-13'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 144
+    trecho: 'AVOP TH-X; periodo: 23/02/2026 A 13/03/2026; area: ; local: BANT'
+  confianca: media
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-operacional-ivr-25-exercicio-2026-03-02
+  descricao: EXERCICIO OPERACIONAL IVR - 25 Exercicio
+  om_destino:
+  - BASM
+  om_diretora: BASM
+  om_coordenadora: BASM
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBSM
+  cidade: Santa Maria
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-03-02'
+  data_termino_oficial: '2026-03-16'
+  data_inicio_planejamento: '2026-03-01'
+  data_termino_planejamento: '2026-03-16'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 25
+    trecho: 'EXERCICIO OPERACIONAL IVR; periodo: CDC: 27.08.25 a 31.08.25 IPC: 03.09.25 a 05.09.25 MPC:
+      29.09.25 a 03.10.25 FPC: 02.12.25 a 04.12.25 Exercicio: 02.03.26 a 16.03.26; area: SANTA MARIA -
+      RS; local: SBSM'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-assaet-tracaja-para-sar-1-2026-03-02
+  descricao: EXERCICIO TECNICO ASSAET TRACAJA PARA-SAR
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: EAS e 1o ETA
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-03-02'
+  data_termino_oficial: '2026-03-13'
+  data_inicio_planejamento: '2026-03-01'
+  data_termino_planejamento: '2026-03-13'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 100
+    trecho: 'EXERCICIO TECNICO ASSAET TRACAJA PARA-SAR; periodo: 02.03.26 a 13.03.26; area: CAMPO GRANDE-MS;
+      local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-lancamento-aereo-kc-390-25-baan-fase-3-2026-03-02
+  descricao: EXERCICIO TECNICO LANCAMENTO AEREO KC-390 - 25 (BAAN) Fase 3
+  om_destino:
+  - BAAF
+  - BAAN
+  - BACG
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBAF
+  - SBAN
+  - SBCG
+  - SBGL
+  cidade: Rio de Janeiro / Anapolis / Campo Grande
+  uf: RJ / GO / MS
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-03-02'
+  data_termino_oficial: '2026-03-06'
+  data_inicio_planejamento: '2026-03-01'
+  data_termino_planejamento: '2026-03-06'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 50
+    trecho: 'EXERCICIO TECNICO LANCAMENTO AEREO KC-390; periodo: Fase 1: 02.02.26 a 06.03.26 (BAAF) Fase
+      2: 02.03.26 a 06.03.25 (BAAN) Fase 3: 02.03.26 a 06.03.25 (BAAF) Fase 4: 06.07.26 a 17.07.25 (BACG)
+      Fase 5: 17.08.26 a 28.08.26 (BAAF) Fase 6: 09.09.26 a 21.09.26 (BAAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-lancamento-aereo-kc-390-26-baaf-fase-2-2026-03-02
+  descricao: EXERCICIO TECNICO LANCAMENTO AEREO KC-390 - 26 (BAAF) Fase 2
+  om_destino:
+  - BAAF
+  - BAAN
+  - BACG
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBAF
+  - SBAN
+  - SBCG
+  - SBGL
+  cidade: Rio de Janeiro / Anapolis / Campo Grande
+  uf: RJ / GO / MS
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-03-02'
+  data_termino_oficial: '2026-03-06'
+  data_inicio_planejamento: '2026-03-01'
+  data_termino_planejamento: '2026-03-06'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 50
+    trecho: 'EXERCICIO TECNICO LANCAMENTO AEREO KC-390; periodo: Fase 1: 02.02.26 a 06.03.26 (BAAF) Fase
+      2: 02.03.26 a 06.03.25 (BAAN) Fase 3: 02.03.26 a 06.03.25 (BAAF) Fase 4: 06.07.26 a 17.07.25 (BACG)
+      Fase 5: 17.08.26 a 28.08.26 (BAAF) Fase 6: 09.09.26 a 21.09.26 (BAAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-bvr-pampa-caca-f-5m-fase1-2026-03-09
+  descricao: EXERCICIO TECNICO BVR PAMPA-CACA F-5M - FASE1
+  om_destino:
+  - BACO
+  om_diretora: BACO
+  om_coordenadora: BACO
+  om_executora: 1 GAVCA e 1/14 GAV
+  local_desdobramento_icao:
+  - SBCO
+  cidade: Canoas
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-03-09'
+  data_termino_oficial: '2026-03-20'
+  data_inicio_planejamento: '2026-03-08'
+  data_termino_planejamento: '2026-03-20'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 48
+    trecho: 'EXERCICIO TECNICO BVR PAMPA-CACA F-5M; periodo: FASE1: 09.03.26 a 20.03.26; FASE 2: 13.07.26
+      a 17.07.26; e FASE 3: 31.08.26 a 04.09.26.; area: CANOAS - RS; local: SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: instrucao-de-salto-de-emergencia-isem-e-operacoes-aeroterrestres-opae-1-2026-03-09
+  descricao: INSTRUCAO DE SALTO DE EMERGENCIA (ISEM) E OPERACOES AEROTERRESTRES (OPAE)
+  om_destino:
+  - AFA
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao:
+  - SBYS
+  cidade: Pirassununga
+  uf: SP
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-03-09'
+  data_termino_oficial: '2026-03-22'
+  data_inicio_planejamento: '2026-03-08'
+  data_termino_planejamento: '2026-03-22'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 188
+    trecho: 'INSTRUCAO DE SALTO DE EMERGENCIA (ISEM) E OPERACOES AEROTERRESTRES (OPAE); periodo: 09.03.2026
+      A 22.03.2026; area: ; local: SBYS'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-pista-critica-c-98-fase-1-2026-03-16
+  descricao: EXERCICIO TECNICO PISTA CRITICA C-98 - Fase 1
+  om_destino:
+  - BABV
+  om_diretora: BAMN
+  om_coordenadora: BAMN
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBBV
+  - SBUA
+  cidade: Boa Vista / Sao Gabriel da Cachoeira
+  uf: RR / AM
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-03-16'
+  data_termino_oficial: '2026-03-31'
+  data_inicio_planejamento: '2026-03-15'
+  data_termino_planejamento: '2026-03-31'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 54
+    trecho: 'EXERCICIO TECNICO PISTA CRITICA C-98; periodo: Fase 1: 16.03.26 a 31.03.26 Fase 2: 17.06.26
+      a 26.06.26; area: BOA VISTA - RR e SAO GABRIEL DA CACHOEIRA - AM; local: SBBV e SBUA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-tiro-aereo-3o-grupo-1-2026-03-16
+  descricao: EXERCICIO TECNICO TIRO AEREO 3o GRUPO
+  om_destino:
+  - BANT
+  om_diretora: BAPV
+  om_coordenadora: BAPV
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBNT
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-03-16'
+  data_termino_oficial: '2026-03-28'
+  data_inicio_planejamento: '2026-03-15'
+  data_termino_planejamento: '2026-03-28'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 56
+    trecho: 'EXERCICIO TECNICO TIRO AEREO 3o GRUPO; periodo: 16.03.26 a 28.03.26; area: PARNAMIRIM- RN;
+      local: SBNT'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-icamento-no-mar-puma-1-2026-03-23
+  descricao: EXERCICIO TECNICO ICAMENTO NO MAR PUMA
+  om_destino:
+  - BASC
+  om_diretora: BASC
+  om_coordenadora: BASC
+  om_executora: 3/8o GAV
+  local_desdobramento_icao:
+  - SBST
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-03-23'
+  data_termino_oficial: '2026-04-10'
+  data_inicio_planejamento: '2026-03-22'
+  data_termino_planejamento: '2026-04-10'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 59
+    trecho: 'EXERCICIO TECNICO ICAMENTO NO MAR PUMA; periodo: 23.03.26 a 10.04.26; area: Santos - SP;
+      local: SBST'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: operacao-iris-2026-fase-1-2026-03-23
+  descricao: OPERACAO IRIS 2026 - Fase 1
+  om_destino:
+  - BACO
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao:
+  - SBCO
+  cidade: Canoas
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-03-23'
+  data_termino_oficial: '2026-04-10'
+  data_inicio_planejamento: '2026-03-22'
+  data_termino_planejamento: '2026-04-10'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 137
+    trecho: 'OPERACAO IRIS 2026; periodo: Fase 1 - 23 mar a 10 abr 2026; e Fase 2 - 28 set a 09 out 2026.;
+      area: ; local: BACO / SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-formacao-kc-390-1-2026-04-06
+  descricao: EXERCICIO TECNICO FORMACAO KC-390
+  om_destino:
+  - BAAN
+  om_diretora: BAAN
+  om_coordenadora: BAAN
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-04-06'
+  data_termino_oficial: '2026-04-21'
+  data_inicio_planejamento: '2026-04-05'
+  data_termino_planejamento: '2026-04-21'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 63
+    trecho: 'EXERCICIO TECNICO FORMACAO KC-390; periodo: 06.04.26 a 21.04.26; area: ANAPOLIS - GO; local:
+      SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-icamento-no-mar-pantera-1-2026-04-06
+  descricao: EXERCICIO TECNICO ICAMENTO NO MAR PANTERA
+  om_destino:
+  - BAFL
+  om_diretora: BASM
+  om_coordenadora: BASM
+  om_executora: 5o/8o GAV
+  local_desdobramento_icao:
+  - SBFL
+  cidade: Florianopolis
+  uf: SC
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-04-06'
+  data_termino_oficial: '2026-04-24'
+  data_inicio_planejamento: '2026-04-05'
+  data_termino_planejamento: '2026-04-24'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 61
+    trecho: 'EXERCICIO TECNICO ICAMENTO NO MAR PANTERA; periodo: 06.04.26 A 24.04.26; area: FLORIANOPOLIS
+      - SC; local: SBFL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-raio-2026-exercicio-2026-04-06
+  descricao: EXERCICIO TECNICO RAIO - 2026 Exercicio
+  om_destino:
+  - CPBV
+  om_diretora: CPBV
+  om_coordenadora: CPBV
+  om_executora: GSD-MN, GSD-CO, GSD-AN, GSD-BE, COMPREP, 7o/8o GAV, 1o/9o GAV
+  local_desdobramento_icao: []
+  cidade: Campo de Provas Brigadeiro Velloso
+  uf: PA
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-04-06'
+  data_termino_oficial: '2026-04-26'
+  data_inicio_planejamento: '2026-04-05'
+  data_termino_planejamento: '2026-04-26'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 102
+    trecho: 'EXERCICIO TECNICO RAIO; periodo: IPC: 03.02.2026 FPC: 03.03.2026 Exercicio: 06.04.2026 a
+      26.04.2026; area: CPBV; local: CACHIMBO - PA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-lancamento-aereo-c-105-1-2026-04-12
+  descricao: EXERCICIO TECNICO LANCAMENTO AEREO C-105
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: 1o/9o GAV e 1o/15o GAV
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-04-12'
+  data_termino_oficial: '2026-04-24'
+  data_inicio_planejamento: '2026-04-11'
+  data_termino_planejamento: '2026-04-24'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 64
+    trecho: 'EXERCICIO TECNICO LANCAMENTO AEREO C-105; periodo: 12.04.26 a 24.04.26; area: CAMPO GRANDE
+      - MS; local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-pista-critica-c-97-1-2026-04-15
+  descricao: EXERCICIO TECNICO PISTA CRITICA C-97
+  om_destino:
+  - BAMN
+  om_diretora: BAMN
+  om_coordenadora: BAMN
+  om_executora: 1o ETA / 7o ETA
+  local_desdobramento_icao:
+  - SBMN
+  cidade: Manaus
+  uf: AM
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-04-15'
+  data_termino_oficial: '2026-04-30'
+  data_inicio_planejamento: '2026-04-14'
+  data_termino_planejamento: '2026-04-30'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 66
+    trecho: 'EXERCICIO TECNICO PISTA CRITICA C-97; periodo: 15.04.26 a 30.04.26; area: MOURA - AM/ CARAUARI
+      - AM; local: SBMN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-carp-do-fms-do-c-105-2026-etapa-2-execucao-2026-04-19
+  descricao: AVAOP - CARP do FMS do C-105 - 2026 Etapa 2 (Execucao)
+  om_destino:
+  - BACG
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: IAOp, 1o/15o GAV e EAS
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-04-19'
+  data_termino_oficial: '2026-05-09'
+  data_inicio_planejamento: '2026-04-18'
+  data_termino_planejamento: '2026-05-09'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 154
+    trecho: 'AVAOP - CARP do FMS do C-105; periodo: Etapa 1 (Precursora) - 22.02.2026 a 28.02.2026 Etapa
+      2 (Execucao) - 19.04.2026 a 09.05.2026; area: CAMPO GRANDE - MS (Etapas 1 e 2); local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-ccdp-do-kc-390-2026-etapa-2-execucao-2026-04-19
+  descricao: AVAOP - CCDP do KC-390 - 2026 Etapa 2 (Execucao)
+  om_destino:
+  - BACG
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: IAOp, 1o GTT e EAS
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-04-19'
+  data_termino_oficial: '2026-05-09'
+  data_inicio_planejamento: '2026-04-18'
+  data_termino_planejamento: '2026-05-09'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 152
+    trecho: 'AVAOP - CCDP do KC-390; periodo: Etapa 1 (Precursora) - 22.02.2026 a 28.02.2026 Etapa 2 (Execucao)
+      - 19.04.2026 a 09.05.2026; area: CAMPO GRANDE - MS (Etapas 1 e 2); local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-mx-15-do-r-99-2026-etapa-2-execucao-2026-04-19
+  descricao: AVAOP - MX-15 do R-99 - 2026 Etapa 2 (Execucao)
+  om_destino:
+  - BAAN
+  om_diretora: IAOp
+  om_coordenadora: IAOp
+  om_executora: 2o/6o GAV e IAOp
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-04-19'
+  data_termino_oficial: '2026-05-09'
+  data_inicio_planejamento: '2026-04-18'
+  data_termino_planejamento: '2026-05-09'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 150
+    trecho: 'AVAOP - MX-15 do R-99; periodo: Etapa 1 (Precursora) - 22.02.2026 a 28.02.2026 Etapa 2 (Execucao)
+      - 19.04.2026 a 09.05.2026; area: ANAPOLIS - GO (Etapas 1 e 2); local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: reuniao-da-aviacao-de-caca-1-2026-04-19
+  descricao: REUNIAO DA AVIACAO DE CACA
+  om_destino:
+  - BASC
+  om_diretora: BASC
+  om_coordenadora: BASC
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBSC
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-04-19'
+  data_termino_oficial: '2026-04-22'
+  data_inicio_planejamento: '2026-04-18'
+  data_termino_planejamento: '2026-04-22'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 171
+    trecho: 'REUNIAO DA AVIACAO DE CACA; periodo: 19.04.26 a 22.04.26; area: RIO DE JANEIRO - RJ; local:
+      SBSC'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-operacional-evam-dbnqr-26-videoconferencia-exercicio-2026-04-27
+  descricao: EXERCICIO OPERACIONAL EVAM DBNQR - 26 (videoconferencia) Exercicio
+  om_destino:
+  - BAAF
+  om_diretora: BAAF
+  om_coordenadora: BAAF
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBAF
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-04-27'
+  data_termino_oficial: '2026-05-08'
+  data_inicio_planejamento: '2026-04-26'
+  data_termino_planejamento: '2026-05-08'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 28
+    trecho: 'EXERCICIO OPERACIONAL EVAM DBNQR; periodo: IPC: 27.01.26 (videoconferencia) MPC: 24.02.26
+      a 26.02.26 (presencial) FPC: 10.03.26 (videoconferencia) Exercicio: 27.04.26 a 08.05.26; area: RIO
+      DE JANEIRO - RJ; local: SBAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-tiro-aereo-pantera-1-2026-04-27
+  descricao: EXERCICIO TECNICO TIRO AEREO PANTERA
+  om_destino:
+  - BAFL
+  om_diretora: BASM
+  om_coordenadora: BASM
+  om_executora: 5o/8o GAV
+  local_desdobramento_icao:
+  - SBFL
+  cidade: Florianopolis
+  uf: SC
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-04-27'
+  data_termino_oficial: '2026-05-01'
+  data_inicio_planejamento: '2026-04-26'
+  data_termino_planejamento: '2026-05-01'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 70
+    trecho: 'EXERCICIO TECNICO TIRO AEREO PANTERA; periodo: 27.04.26 A 01.05.26; area: FLORIANOPOLIS -
+      SC; local: SBFL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-wvr-1-2026-04-27
+  descricao: EXERCICIO TECNICO WVR
+  om_destino:
+  - BAAN
+  om_diretora: BAAN
+  om_coordenadora: BAAN
+  om_executora: 1o/14o GAV, 1o GAVCA, 1o GDA, 1o/10o GAV
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-04-27'
+  data_termino_oficial: '2026-05-08'
+  data_inicio_planejamento: '2026-04-26'
+  data_termino_planejamento: '2026-05-08'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 72
+    trecho: 'EXERCICIO TECNICO WVR; periodo: 27.04.26 a 08.05.26; area: ANAPOLIS - GO; local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-interceptacao-a-29-fase-1-2026-05-05
+  descricao: EXERCICIO TECNICO INTERCEPTACAO A-29 - Fase 1
+  om_destino:
+  - BAAN
+  om_diretora: BABV
+  om_coordenadora: BABV
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-05'
+  data_termino_oficial: '2026-05-09'
+  data_inicio_planejamento: '2026-05-04'
+  data_termino_planejamento: '2026-05-09'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 74
+    trecho: 'EXERCICIO TECNICO INTERCEPTACAO A-29; periodo: Fase 1: 05.05.26 a 09.05.26 Fase 2: 30.05.26
+      a 04.06.26; area: ANAPOLIS - GO; local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-soturno-negro-1-2026-05-10
+  descricao: EXERCICIO TECNICO SOTURNO NEGRO
+  om_destino:
+  - BASM
+  om_diretora: BASM
+  om_coordenadora: BASM
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBSM
+  cidade: Santa Maria
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-10'
+  data_termino_oficial: '2026-05-22'
+  data_inicio_planejamento: '2026-05-09'
+  data_termino_planejamento: '2026-05-22'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 77
+    trecho: 'EXERCICIO TECNICO SOTURNO NEGRO; periodo: 10.05.26 A 22.05.26; area: SANTA MARIA-RS; local:
+      SBSM'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avop-f-39e-2026-fase-1-verificacao-tecnica-2026-05-11
+  descricao: AVOP F-39E - Fase 1 (Verificacao Tecnica)
+  om_destino:
+  - BAAN
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-11'
+  data_termino_oficial: '2026-05-30'
+  data_inicio_planejamento: '2026-05-10'
+  data_termino_planejamento: '2026-05-30'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 127
+    trecho: 'AVOP F-39E - 2026; periodo: FASE 1 - VERIFICACAO TECNICA 4.1 - 11/05/2026 - 30/05/2026 FASE
+      2 - VALIDACAO OPERACIONAL e LOG. 4.2 - DATA ASD COMPREP FASE 3 - VERIFICACAO TECNICA, VALIDACAO
+      OPERACIONAL VALIDACAO E LOGISTICA 4.3 - DATA ASD COMPREP; area: ; local:'
+  confianca: alta
+  observacoes: Fases 2 e 3 aparecem como DATA ASD COMPREP na ICA e nao foram cadastradas como missoes
+    datadas.
+- id: exercicio-conjunto-escudo-tinia-26-exercicio-2026-05-11
+  descricao: EXERCICIO CONJUNTO ESCUDO-TINIA - 26 EXERCICIO
+  om_destino:
+  - BAAN
+  om_diretora: BAAN
+  om_coordenadora: BAAN
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-11'
+  data_termino_oficial: '2026-05-29'
+  data_inicio_planejamento: '2026-05-10'
+  data_termino_planejamento: '2026-05-29'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 31
+    trecho: 'EXERCICIO CONJUNTO ESCUDO-TINIA; periodo: IPC 15.12.25 A 17.12.25 FPC 09.02.26 A 13.02.26
+      EXERCICIO 11.05.26 A 29.05.26; area: ANAPOLIS-GO; local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-arcanjo-missao-de-paz-1-2026-05-11
+  descricao: EXERCICIO TECNICO ARCANJO (MISSAO DE PAZ)
+  om_destino:
+  - BAAF
+  om_diretora: BAAF
+  om_coordenadora: BAAF
+  om_executora: BAAF (GSD-AF)
+  local_desdobramento_icao: []
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-05-11'
+  data_termino_oficial: '2026-06-19'
+  data_inicio_planejamento: '2026-05-10'
+  data_termino_planejamento: '2026-06-19'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 104
+    trecho: 'EXERCICIO TECNICO ARCANJO (MISSAO DE PAZ); periodo: 11.05.26 a 19.06.26; area: BAAF (GSD-AF);
+      local: BAAF/GSD-AF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-noturno-1-gavca-1-2026-05-11
+  descricao: EXERCICIO TECNICO NOTURNO 1 GAVCA
+  om_destino:
+  - BAAN
+  - BAGL
+  om_diretora: BASC
+  om_coordenadora: BASC
+  om_executora: 1 GAVCA
+  local_desdobramento_icao:
+  - SBAN
+  - SBGL
+  cidade: Anapolis / Rio de Janeiro
+  uf: GO / RJ
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-11'
+  data_termino_oficial: '2026-05-15'
+  data_inicio_planejamento: '2026-05-10'
+  data_termino_planejamento: '2026-05-15'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 79
+    trecho: 'EXERCICIO TECNICO NOTURNO 1 GAVCA; periodo: 11.05.26 a 15.05.26; area: ANAPOLIS - GO e GALEAO
+      - RJ; local: SBAN e SBGL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-operacional-tapio-sentinel-26-br-2026-05-12
+  descricao: EXERCICIO OPERACIONAL TAPIO SENTINEL - 26 (BR)
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-05-12'
+  data_termino_oficial: '2026-05-13'
+  data_inicio_planejamento: '2026-05-11'
+  data_termino_planejamento: '2026-05-13'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 37
+    trecho: 'EXERCICIO OPERACIONAL TAPIO SENTINEL; periodo: CDC - 30.09.2025 IPC - 09.02.26 (BR) 10A12.02.26
+      MPC - 11.05.26 (BR) 12.05.26 A 13.05.26 FPC - 29.06.26 (BR) 30.06.26 A 01.07.26 EXERCICIO: FASE
+      WARRIOR 14 A 28.08.2026 FASE RESCUE 11 A 25.09.2026; area: CAMPO GRA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: portoes-abertos-musal-air-show-2026
+  descricao: Portoes Abertos - MUSAL Air Show e Dia internacional de Museus
+  om_destino:
+  - BAGL
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-05-16'
+  data_termino_oficial: '2026-05-17'
+  data_inicio_planejamento: '2026-05-15'
+  data_termino_planejamento: '2026-05-17'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 185
+    trecho: LOCAL Rio de Janeiro - RJ DATA 16 a 17 MAI 26
+  confianca: media
+  observacoes: Registro de Portoes Abertos/Desfile Aereo extraido de quadro resumido.
+- id: exercicio-tecnico-sar-001-1-2026-05-19
+  descricao: EXERCICIO TECNICO SAR 001
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: 2/10 GAV
+  local_desdobramento_icao:
+  - SBSJ
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-05-19'
+  data_termino_oficial: '2026-05-21'
+  data_inicio_planejamento: '2026-05-18'
+  data_termino_planejamento: '2026-05-21'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 76
+    trecho: 'EXERCICIO TECNICO SAR 001; periodo: 19.05.26 a 21.05.26; area: SAO JOSE DOS CAMPOS - SP;
+      local: SBSJ'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: reuniao-da-aviacao-de-asas-rotativas-1-2026-05-19
+  descricao: REUNIAO DA AVIACAO DE ASAS ROTATIVAS
+  om_destino:
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBNT
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-19'
+  data_termino_oficial: '2026-05-21'
+  data_inicio_planejamento: '2026-05-18'
+  data_termino_planejamento: '2026-05-21'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 169
+    trecho: 'REUNIAO DA AVIACAO DE ASAS ROTATIVAS; periodo: 19.05.2026 a 21.05.2026; area: NATAL-RN; local:
+      SBNT'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: reuniao-da-aviacao-de-patrulha-1-2026-05-21
+  descricao: REUNIAO DA AVIACAO DE PATRULHA
+  om_destino:
+  - BAFL
+  om_diretora: BACO
+  om_coordenadora: BACO
+  om_executora: 1/7 GAV, 2o/7o GAV, 3o/7o GAV e 1/5 GAV
+  local_desdobramento_icao:
+  - SBFL
+  cidade: Florianopolis
+  uf: SC
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-05-21'
+  data_termino_oficial: '2026-05-23'
+  data_inicio_planejamento: '2026-05-20'
+  data_termino_planejamento: '2026-05-23'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 173
+    trecho: 'REUNIAO DA AVIACAO DE PATRULHA; periodo: 21.05.26 a 23.05.26; area: FLORIANOPOLIS; local:
+      SBFL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-defensor-2026-exercicio-2026-05-28
+  descricao: EXERCICIO TECNICO DEFENSOR - 2026 Exercicio
+  om_destino:
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: GSD-MN, GSD-CO, GSD-GL, GSD-NT, GSD-CG, EAS, 3o GDAAE, DCEA, DCTA e GITE
+  local_desdobramento_icao: []
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-28'
+  data_termino_oficial: '2026-07-03'
+  data_inicio_planejamento: '2026-05-27'
+  data_termino_planejamento: '2026-07-03'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 111
+    trecho: 'EXERCICIO TECNICO DEFENSOR; periodo: IPC: 23.03.2026 FPC: 22.04.2026 Exercicio: 28.05.2026
+      a 03.07.2026; area: BANT; local: NATAL - RN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-interceptacao-a-29-26-fase-2-2026-05-30
+  descricao: EXERCICIO TECNICO INTERCEPTACAO A-29 - 26 Fase 2
+  om_destino:
+  - BAAN
+  om_diretora: BABV
+  om_coordenadora: BABV
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-05-30'
+  data_termino_oficial: '2026-06-04'
+  data_inicio_planejamento: '2026-05-29'
+  data_termino_planejamento: '2026-06-04'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 74
+    trecho: 'EXERCICIO TECNICO INTERCEPTACAO A-29; periodo: Fase 1: 05.05.26 a 09.05.26 Fase 2: 30.05.26
+      a 04.06.26; area: ANAPOLIS - GO; local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: ew-f-x2-2026-ew-2026-06-08
+  descricao: EW F-X2 2026 - EW
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: ''
+  uf: ''
+  categoria_diaria: ''
+  data_inicio_oficial: '2026-06-08'
+  data_termino_oficial: '2026-06-12'
+  data_inicio_planejamento: '2026-06-07'
+  data_termino_planejamento: '2026-06-12'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 135
+    trecho: 'EW F-X2 2026; periodo: EW: 08/06/2026 - 12/06/2026 BACKUP: 15/06/2026 - 19/06/2026 EW: 02/11/2026
+      - 06/11/2026 BACKUP: 09/11/2026 - 13/11/2026; area: ; local: SNCW'
+  confianca: media
+  observacoes: ''
+- id: exercicio-operacional-salto-livre-operacional-26-vc-fase-unica-2026-06-08
+  descricao: EXERCICIO OPERACIONAL SALTO LIVRE OPERACIONAL - 26 (VC) Fase Unica
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: EAS, 1o/1o GT, 1o GTT, CONAVOPESP e COPESP
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-06-08'
+  data_termino_oficial: '2026-06-17'
+  data_inicio_planejamento: '2026-06-07'
+  data_termino_planejamento: '2026-06-17'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 35
+    trecho: 'EXERCICIO OPERACIONAL SALTO LIVRE OPERACIONAL; periodo: IPC: 09.03.26 (VC) MPC: 10.04.26
+      (VC) FPC: 04.05.26 (VC) Fase Unica - 08.06.2026 a 17.06.26; area: CAMPO GRANDE - MS; local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-selva-pelicano-1-2026-06-08
+  descricao: EXERCICIO TECNICO SELVA PELICANO
+  om_destino:
+  - CPBV
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: 2o/10o GAV
+  local_desdobramento_icao:
+  - SBCC
+  cidade: Campo de Provas Brigadeiro Velloso
+  uf: PA
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-06-08'
+  data_termino_oficial: '2026-06-21'
+  data_inicio_planejamento: '2026-06-07'
+  data_termino_planejamento: '2026-06-21'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 81
+    trecho: 'EXERCICIO TECNICO SELVA PELICANO; periodo: 08.06.26 a 21.06.26; area: CPBV; local: SBCC'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: reuniao-da-aviacao-de-transporte-1-2026-06-09
+  descricao: REUNIAO DA AVIACAO DE TRANSPORTE
+  om_destino:
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBNT
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-06-09'
+  data_termino_oficial: '2026-06-11'
+  data_inicio_planejamento: '2026-06-08'
+  data_termino_planejamento: '2026-06-11'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 178
+    trecho: 'REUNIAO DA AVIACAO DE TRANSPORTE; periodo: 09.06.26 a 11.06.25; area: PARNAMIRIM-RN; local:
+      SBNT'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: desfile-aereo-can-dia-aviacao-transporte-2026
+  descricao: Desfile Aereo - Cerimonia do CAN/Dia da Aviacao de Transporte
+  om_destino:
+  - BAGL
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-06-12'
+  data_termino_oficial: '2026-06-12'
+  data_inicio_planejamento: '2026-06-11'
+  data_termino_planejamento: '2026-06-12'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 184
+    trecho: LOCAL Rio de Janeiro - RJ DATA 12.06.26
+  confianca: media
+  observacoes: Registro de Portoes Abertos/Desfile Aereo extraido de quadro resumido.
+- id: exercicio-tecnico-receiver-opfm-kc-390-fase-1-2026-06-15
+  descricao: EXERCICIO TECNICO RECEIVER OPFM KC-390 - Fase 1
+  om_destino:
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBGP
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-06-15'
+  data_termino_oficial: '2026-06-19'
+  data_inicio_planejamento: '2026-06-14'
+  data_termino_planejamento: '2026-06-19'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 83
+    trecho: 'EXERCICIO TECNICO RECEIVER OPFM KC-390; periodo: Fase 1: 15.06.26 a 19.06.26 Fase 2: 20.06.26
+      a 26.06.26; area: Fase 1: GAVIAO PEIXOTO - SP Fase 2: RIO DE JANEIRO - RJ; local: SBGP / BAGL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-pista-critica-c-98-26-fase-2-2026-06-17
+  descricao: EXERCICIO TECNICO PISTA CRITICA C-98 - 26 Fase 2
+  om_destino:
+  - BABV
+  om_diretora: BAMN
+  om_coordenadora: BAMN
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBBV
+  - SBUA
+  cidade: Boa Vista / Sao Gabriel da Cachoeira
+  uf: RR / AM
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-06-17'
+  data_termino_oficial: '2026-06-26'
+  data_inicio_planejamento: '2026-06-16'
+  data_termino_planejamento: '2026-06-26'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 54
+    trecho: 'EXERCICIO TECNICO PISTA CRITICA C-98; periodo: Fase 1: 16.03.26 a 31.03.26 Fase 2: 17.06.26
+      a 26.06.26; area: BOA VISTA - RR e SAO GABRIEL DA CACHOEIRA - AM; local: SBBV e SBUA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-receiver-opfm-kc-390-26-fase-2-2026-06-20
+  descricao: EXERCICIO TECNICO RECEIVER OPFM KC-390 - 26 Fase 2
+  om_destino:
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBGP
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-06-20'
+  data_termino_oficial: '2026-06-26'
+  data_inicio_planejamento: '2026-06-19'
+  data_termino_planejamento: '2026-06-26'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 83
+    trecho: 'EXERCICIO TECNICO RECEIVER OPFM KC-390; periodo: Fase 1: 15.06.26 a 19.06.26 Fase 2: 20.06.26
+      a 26.06.26; area: Fase 1: GAVIAO PEIXOTO - SP Fase 2: RIO DE JANEIRO - RJ; local: SBGP / BAGL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: reuniao-da-busca-e-salvamento-reusar-1-2026-06-22
+  descricao: REUNIAO DA BUSCA E SALVAMENTO (REUSAR)
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: CONFORME QUADRO DE MEIOS AEREOS
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-06-22'
+  data_termino_oficial: '2026-06-26'
+  data_inicio_planejamento: '2026-06-21'
+  data_termino_planejamento: '2026-06-26'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 175
+    trecho: 'REUNIAO DA BUSCA E SALVAMENTO (REUSAR); periodo: 22.06.2026 a 26.06.2026; area: CAMPO GRANDE
+      - MS; local: SBCG'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: reuniao-da-aviacao-de-reconhecimento-1-2026-06-23
+  descricao: REUNIAO DA AVIACAO DE RECONHECIMENTO
+  om_destino:
+  - BASM
+  om_diretora: BASM
+  om_coordenadora: BASM
+  om_executora: 1/7 GAV, 1o/12o GAV, 1o/10o GAV e 2o/6o GAV
+  local_desdobramento_icao:
+  - SBSM
+  cidade: Santa Maria
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-06-23'
+  data_termino_oficial: '2026-06-25'
+  data_inicio_planejamento: '2026-06-22'
+  data_termino_planejamento: '2026-06-25'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 177
+    trecho: 'REUNIAO DA AVIACAO DE RECONHECIMENTO; periodo: 23.06.26 a 25.06.26; area: SANTA MARIA - RS;
+      local: SBSM'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-operacional-tapio-sentinel-26-br-2026-06-30
+  descricao: EXERCICIO OPERACIONAL TAPIO SENTINEL - 26 (BR)
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-06-30'
+  data_termino_oficial: '2026-07-01'
+  data_inicio_planejamento: '2026-06-29'
+  data_termino_planejamento: '2026-07-01'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 37
+    trecho: 'EXERCICIO OPERACIONAL TAPIO SENTINEL; periodo: CDC - 30.09.2025 IPC - 09.02.26 (BR) 10A12.02.26
+      MPC - 11.05.26 (BR) 12.05.26 A 13.05.26 FPC - 29.06.26 (BR) 30.06.26 A 01.07.26 EXERCICIO: FASE
+      WARRIOR 14 A 28.08.2026 FASE RESCUE 11 A 25.09.2026; area: CAMPO GRA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-lancamento-aereo-kc-390-25-baaf-fase-4-2026-07-06
+  descricao: EXERCICIO TECNICO LANCAMENTO AEREO KC-390 - 25 (BAAF) Fase 4
+  om_destino:
+  - BAAF
+  - BAAN
+  - BACG
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBAF
+  - SBAN
+  - SBCG
+  - SBGL
+  cidade: Rio de Janeiro / Anapolis / Campo Grande
+  uf: RJ / GO / MS
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-07-06'
+  data_termino_oficial: '2026-07-17'
+  data_inicio_planejamento: '2026-07-05'
+  data_termino_planejamento: '2026-07-17'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 50
+    trecho: 'EXERCICIO TECNICO LANCAMENTO AEREO KC-390; periodo: Fase 1: 02.02.26 a 06.03.26 (BAAF) Fase
+      2: 02.03.26 a 06.03.25 (BAAN) Fase 3: 02.03.26 a 06.03.25 (BAAF) Fase 4: 06.07.26 a 17.07.25 (BACG)
+      Fase 5: 17.08.26 a 28.08.26 (BAAF) Fase 6: 09.09.26 a 21.09.26 (BAAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: salitre-2026-1-2026-07-06
+  descricao: SALITRE 2026
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: ''
+  uf: ''
+  categoria_diaria: ''
+  data_inicio_oficial: '2026-07-06'
+  data_termino_oficial: '2026-07-11'
+  data_inicio_planejamento: '2026-07-05'
+  data_termino_planejamento: '2026-07-11'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 164
+    trecho: 'SALITRE 2026; periodo: 28.06 a 11.07.26; area: ; local: SCFA - Base Aerea de Cerro Moreno
+      - ANTOFAGASTA'
+  confianca: media
+  observacoes: ''
+- id: exercicio-tecnico-bvr-pampa-caca-f-5m-fase-2-2026-07-13
+  descricao: EXERCICIO TECNICO BVR PAMPA-CACA F-5M - FASE 2
+  om_destino:
+  - BACO
+  om_diretora: BACO
+  om_coordenadora: BACO
+  om_executora: 1 GAVCA e 1/14 GAV
+  local_desdobramento_icao:
+  - SBCO
+  cidade: Canoas
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-07-13'
+  data_termino_oficial: '2026-07-17'
+  data_inicio_planejamento: '2026-07-12'
+  data_termino_planejamento: '2026-07-17'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 48
+    trecho: 'EXERCICIO TECNICO BVR PAMPA-CACA F-5M; periodo: FASE1: 09.03.26 a 20.03.26; FASE 2: 13.07.26
+      a 17.07.26; e FASE 3: 31.08.26 a 04.09.26.; area: CANOAS - RS; local: SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: desfile-aereo-santos-dumont-musal-2026
+  descricao: Desfile Aereo - Aniversario de Santos Dumont e Aniversario do MUSAL
+  om_destino:
+  - BAGL
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-07-18'
+  data_termino_oficial: '2026-07-19'
+  data_inicio_planejamento: '2026-07-17'
+  data_termino_planejamento: '2026-07-19'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 185
+    trecho: LOCAL Rio de Janeiro - RJ DATA 18 a 19 JUL 26
+  confianca: media
+  observacoes: Registro de Portoes Abertos/Desfile Aereo extraido de quadro resumido.
+- id: reuniao-da-infantaria-da-aeronautica-1-2026-07-27
+  descricao: REUNIAO DA INFANTARIA DA AERONAUTICA
+  om_destino:
+  - BAAF
+  om_diretora: BAAF
+  om_coordenadora: BAAF
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao: []
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-07-27'
+  data_termino_oficial: '2026-07-31'
+  data_inicio_planejamento: '2026-07-26'
+  data_termino_planejamento: '2026-07-31'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 180
+    trecho: 'REUNIAO DA INFANTARIA DA AERONAUTICA; periodo: 27.07.26 a 31.07.26; area: RIO DE JANEIRO
+      - RJ; local: BAAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: avaop-irst-do-f-39-etapa-1-precursora-2026-08-02
+  descricao: AVAOP - IRST do F-39 - Etapa 1 (Precursora)
+  om_destino:
+  - BAAN
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: 1o GDA, 1o GAVCA e IAOp
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-08-02'
+  data_termino_oficial: '2026-08-08'
+  data_inicio_planejamento: '2026-08-01'
+  data_termino_planejamento: '2026-08-08'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 162
+    trecho: 'AVAOP - IRST do F-39; periodo: Etapa 1 (Precursora) - 02.08.2026 a 08.08.2026 Etapa 2 (Execucao)
+      - 04.10.2026 a 24.10.2026; area: ANAPOLIS - GO (Etapas 1 e 2); local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-rdr-1600-modo-search-do-h-36-fase-1-precursora-2026-08-02
+  descricao: AVAOP - RDR-1600 MODO SEARCH do H-36 - Fase 1 (Precursora)
+  om_destino:
+  - BANT
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: 1o/8 o GAV, CLBI e IAOp
+  local_desdobramento_icao:
+  - SBNT
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-08-02'
+  data_termino_oficial: '2026-08-08'
+  data_inicio_planejamento: '2026-08-01'
+  data_termino_planejamento: '2026-08-08'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 160
+    trecho: 'AVAOP - RDR-1600 MODO SEARCH do H-36; periodo: Fase 1 (Precursora) - 02.08.2026 a 08.08.2026
+      Fase 2 (Execucao) - 04.10.2026 a 24.10.2026; area: PARNAMIRIM - RN (Etapas 1 e 2); local: SBNT'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-sar-do-lessonia-etapa-1-precursora-2026-08-02
+  descricao: AVAOP - SAR do LESSONIA - Etapa 1 (Precursora)
+  om_destino:
+  - BABR
+  om_diretora: IAOp
+  om_coordenadora: IAOp
+  om_executora: COMAE e IAOp
+  local_desdobramento_icao:
+  - SBBR
+  cidade: Brasilia
+  uf: DF
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-08-02'
+  data_termino_oficial: '2026-08-08'
+  data_inicio_planejamento: '2026-08-01'
+  data_termino_planejamento: '2026-08-08'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 158
+    trecho: 'AVAOP - SAR do LESSONIA; periodo: Etapa 1 (Precursora) - 02.08.2026 a 08.08.2026 Etapa 2
+      (Execucao) - 04.10.2026 a 24.10.2026; area: BRASILIA - DF (Etapas 1 e 2); local: SBBR'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-comunicacao-hf-integracao-2026-fase-2-kc-390-2026-08-03
+  descricao: AVAOP COMUNICACAO HF - INTEGRACAO - 2026 Fase 2 (KC-390)
+  om_destino:
+  - BAGL
+  om_diretora: IAOp
+  om_coordenadora: IAOp
+  om_executora: PAMA-GL, 1GAV15, 1GT1 e IAOp
+  local_desdobramento_icao:
+  - SBGL
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-08-03'
+  data_termino_oficial: '2026-08-14'
+  data_inicio_planejamento: '2026-08-02'
+  data_termino_planejamento: '2026-08-14'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 156
+    trecho: 'AVAOP COMUNICACAO HF - INTEGRACAO; periodo: Fase 1 (C-105) 06.07.2026 s 17.07.2026 Fase 2
+      (KC-390) 03.08.2026 a 14.08.2026; area: RIO DE JANEIRO - RJ; local: SBGL e PAMA-GL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-trinitro-fase-1-2026-08-03
+  descricao: EXERCICIO TECNICO TRINITRO - Fase 1
+  om_destino:
+  - CPBV
+  om_diretora: CPBV
+  om_coordenadora: DIVLOG da SPOG
+  om_executora: PAMB-RJ
+  local_desdobramento_icao:
+  - SBCC
+  cidade: Campo de Provas Brigadeiro Velloso
+  uf: PA
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-08-03'
+  data_termino_oficial: '2026-08-22'
+  data_inicio_planejamento: '2026-08-02'
+  data_termino_planejamento: '2026-08-22'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 120
+    trecho: 'EXERCICIO TECNICO TRINITRO; periodo: Fase 1: 03.08.26 a 22.08.26 Fase 2: 07.09.26 a 26.09.26
+      (Alternativa); area: NOVO PROGRESSO - PA; local: SBCC'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-noe-gaviao-fase-1-2026-08-10
+  descricao: EXERCICIO TECNICO NOE GAVIAO - Fase 1
+  om_destino:
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: 1o/11o GAV
+  local_desdobramento_icao:
+  - SBRF
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-08-10'
+  data_termino_oficial: '2026-08-21'
+  data_inicio_planejamento: '2026-08-09'
+  data_termino_planejamento: '2026-08-21'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 85
+    trecho: 'EXERCICIO TECNICO NOE GAVIAO; periodo: Fase 1: 10.08.2026 a 21.08.2026 Fase 2: 08.09.2026
+      a 02.10.2026; area: RECIFE - PE; local: SBRF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-operacional-tapio-sentinel-26-exercicio-fase-warrior-2026-08-14
+  descricao: 'EXERCICIO OPERACIONAL TAPIO SENTINEL - 26 EXERCICIO: FASE WARRIOR'
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-08-14'
+  data_termino_oficial: '2026-08-28'
+  data_inicio_planejamento: '2026-08-13'
+  data_termino_planejamento: '2026-08-28'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 37
+    trecho: 'EXERCICIO OPERACIONAL TAPIO SENTINEL; periodo: CDC - 30.09.2025 IPC - 09.02.26 (BR) 10A12.02.26
+      MPC - 11.05.26 (BR) 12.05.26 A 13.05.26 FPC - 29.06.26 (BR) 30.06.26 A 01.07.26 EXERCICIO: FASE
+      WARRIOR 14 A 28.08.2026 FASE RESCUE 11 A 25.09.2026; area: CAMPO GRA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-lancamento-aereo-kc-390-25-bacg-fase-5-2026-08-17
+  descricao: EXERCICIO TECNICO LANCAMENTO AEREO KC-390 - 25 (BACG) Fase 5
+  om_destino:
+  - BAAF
+  - BAAN
+  - BACG
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBAF
+  - SBAN
+  - SBCG
+  - SBGL
+  cidade: Rio de Janeiro / Anapolis / Campo Grande
+  uf: RJ / GO / MS
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-08-17'
+  data_termino_oficial: '2026-08-28'
+  data_inicio_planejamento: '2026-08-16'
+  data_termino_planejamento: '2026-08-28'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 50
+    trecho: 'EXERCICIO TECNICO LANCAMENTO AEREO KC-390; periodo: Fase 1: 02.02.26 a 06.03.26 (BAAF) Fase
+      2: 02.03.26 a 06.03.25 (BAAN) Fase 3: 02.03.26 a 06.03.25 (BAAF) Fase 4: 06.07.26 a 17.07.25 (BACG)
+      Fase 5: 17.08.26 a 28.08.26 (BAAF) Fase 6: 09.09.26 a 21.09.26 (BAAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-reop-lacador-26-reop-sbpk-2026-08-17
+  descricao: EXERCICIO TECNICO REOP LACADOR - 26 REOP SBPK
+  om_destino:
+  - BACG
+  om_diretora: BACO
+  om_coordenadora: BACO
+  om_executora: 1o GDAAE
+  local_desdobramento_icao:
+  - SBPK
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-08-17'
+  data_termino_oficial: '2026-10-16'
+  data_inicio_planejamento: '2026-08-16'
+  data_termino_planejamento: '2026-10-16'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 115
+    trecho: 'EXERCICIO TECNICO REOP LACADOR; periodo: IPC: 06.04.26 (videoconferencia) FPC: NIL REOP BACG:
+      06.06.26 a 08.08.26 REOP SBPK: 17.08.26 a 16.10.26; area: REOP BACG: Fase 1: CANOAS-RS Fase 2: CAMPO
+      GRANDE-MS Fase 3: CANOAS-RS REOP SBPK: Fase 1: CANOAS-RS Fase 2: '
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-retorno-a-pista-c-98-1-2026-08-17
+  descricao: EXERCICIO TECNICO RETORNO A PISTA C-98
+  om_destino:
+  - BABE
+  om_diretora: BABE
+  om_coordenadora: BABE
+  om_executora: IPEV E 1o ETA
+  local_desdobramento_icao:
+  - SBSJ
+  cidade: Belem
+  uf: PA
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-08-17'
+  data_termino_oficial: '2026-10-31'
+  data_inicio_planejamento: '2026-08-16'
+  data_termino_planejamento: '2026-10-31'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 68
+    trecho: 'EXERCICIO TECNICO RETORNO A PISTA C-98; periodo: 17.08.2026 a 31.10.2026; area: SAO JOSE
+      DOS CAMPOS - SP; local: SBSJ'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-rumba-ivr-fase-teorica-2026-08-17
+  descricao: EXERCICIO TECNICO RUMBA IVR - Fase Teorica
+  om_destino:
+  - BABE
+  - BACO
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: 2o/7o GAV, 3o/7o GAV e 1o/5o GAV
+  local_desdobramento_icao:
+  - SBBE
+  - SBCO
+  - SBNT
+  cidade: Belem / Canoas / Parnamirim
+  uf: PA / RS / RN
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-08-17'
+  data_termino_oficial: '2026-08-26'
+  data_inicio_planejamento: '2026-08-16'
+  data_termino_planejamento: '2026-08-26'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 87
+    trecho: 'EXERCICIO TECNICO RUMBA IVR; periodo: Fase Teorica: 17.08.26 a 26.08.26 Fase 1: 31.08.26
+      a 02.10.26 Fase 2: 05.10.26 a 16.10.26; area: NATAL - RN/ BELEM - PA/ CANOAS - RS; local: SBNT/SBBE/SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: radar-f-x2-2026-1-2026-08-17
+  descricao: RADAR F-X2 2026
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: ''
+  uf: ''
+  categoria_diaria: ''
+  data_inicio_oficial: '2026-08-17'
+  data_termino_oficial: '2026-08-21'
+  data_inicio_planejamento: '2026-08-16'
+  data_termino_planejamento: '2026-08-21'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 139
+    trecho: 'RADAR F-X2 2026; periodo: 17/08/2026 - 21/08/2026 (Back up 24/08/26 a28/08/26); area: ; local:
+      GPX, BASE AEREA DE ANAPOLIS'
+  confianca: media
+  observacoes: ''
+- id: exercicio-tecnico-bvr-pampa-caca-f-5m-e-fase-3-2026-08-31
+  descricao: EXERCICIO TECNICO BVR PAMPA-CACA F-5M - e FASE 3
+  om_destino:
+  - BACO
+  om_diretora: BACO
+  om_coordenadora: BACO
+  om_executora: 1 GAVCA e 1/14 GAV
+  local_desdobramento_icao:
+  - SBCO
+  cidade: Canoas
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-08-31'
+  data_termino_oficial: '2026-09-04'
+  data_inicio_planejamento: '2026-08-30'
+  data_termino_planejamento: '2026-09-04'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 48
+    trecho: 'EXERCICIO TECNICO BVR PAMPA-CACA F-5M; periodo: FASE1: 09.03.26 a 20.03.26; FASE 2: 13.07.26
+      a 17.07.26; e FASE 3: 31.08.26 a 04.09.26.; area: CANOAS - RS; local: SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-rumba-ivr-26-fase-1-2026-08-31
+  descricao: EXERCICIO TECNICO RUMBA IVR - 26 Fase 1
+  om_destino:
+  - BABE
+  - BACO
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: 2o/7o GAV, 3o/7o GAV e 1o/5o GAV
+  local_desdobramento_icao:
+  - SBBE
+  - SBCO
+  - SBNT
+  cidade: Belem / Canoas / Parnamirim
+  uf: PA / RS / RN
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-08-31'
+  data_termino_oficial: '2026-10-02'
+  data_inicio_planejamento: '2026-08-30'
+  data_termino_planejamento: '2026-10-02'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 87
+    trecho: 'EXERCICIO TECNICO RUMBA IVR; periodo: Fase Teorica: 17.08.26 a 26.08.26 Fase 1: 31.08.26
+      a 02.10.26 Fase 2: 05.10.26 a 16.10.26; area: NATAL - RN/ BELEM - PA/ CANOAS - RS; local: SBNT/SBBE/SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-cabra-da-peste-pceo-tr-26-fase-2-estagiarios-2026-09-04
+  descricao: EXERCICIO TECNICO CABRA DA PESTE (PCEO-TR) - 26 Fase 2 (ESTAGIARIOS)
+  om_destino:
+  - BAAF
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: 1/5 GAV e 2o ETA
+  local_desdobramento_icao:
+  - SBAF
+  - SBGW
+  cidade: Rio de Janeiro / Guaratingueta
+  uf: RJ / SP
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-09-04'
+  data_termino_oficial: '2026-10-03'
+  data_inicio_planejamento: '2026-09-03'
+  data_termino_planejamento: '2026-10-03'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 52
+    trecho: 'EXERCICIO TECNICO CABRA DA PESTE (PCEO-TR); periodo: Fase 1 (INSTRUTORES) - 22.02.26 a 14.03.26
+      Fase 2 (ESTAGIARIOS) - 04.09.26 a 03.10.26; area: RIO DE JANEIRO - RJ / GUARATINGUETA - SP; local:
+      SBAF / SBGW'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: operacao-semana-da-patria-md-1-2026-09-04
+  descricao: OPERACAO SEMANA DA PATRIA (MD)
+  om_destino:
+  - BAAN
+  - BABR
+  om_diretora: BABR
+  om_coordenadora: BABR
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBAN
+  - SBBR
+  cidade: Anapolis / Brasilia
+  uf: GO / DF
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-09-04'
+  data_termino_oficial: '2026-09-07'
+  data_inicio_planejamento: '2026-09-03'
+  data_termino_planejamento: '2026-09-07'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 182
+    trecho: 'OPERACAO SEMANA DA PATRIA (MD); periodo: 04.09.26 a 07.09.26; area: BRASILIA - DF e ANAPOLIS
+      - GO; local: SBBR e SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-noe-falcao-1-2026-09-07
+  descricao: EXERCICIO TECNICO NOE FALCAO
+  om_destino:
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: ''
+  om_executora: 1o/8o GAV
+  local_desdobramento_icao:
+  - SBRF
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-09-07'
+  data_termino_oficial: '2026-09-25'
+  data_inicio_planejamento: '2026-09-06'
+  data_termino_planejamento: '2026-09-25'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 89
+    trecho: 'EXERCICIO TECNICO NOE FALCAO; periodo: 07.09.26 a 25.09.26; area: RECIFE - PE; local: SBRF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-trinitro-26-fase-2-2026-09-07
+  descricao: EXERCICIO TECNICO TRINITRO - 26 Fase 2
+  om_destino:
+  - CPBV
+  om_diretora: CPBV
+  om_coordenadora: DIVLOG da SPOG
+  om_executora: PAMB-RJ
+  local_desdobramento_icao:
+  - SBCC
+  cidade: Campo de Provas Brigadeiro Velloso
+  uf: PA
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-09-07'
+  data_termino_oficial: '2026-09-26'
+  data_inicio_planejamento: '2026-09-06'
+  data_termino_planejamento: '2026-09-26'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 120
+    trecho: 'EXERCICIO TECNICO TRINITRO; periodo: Fase 1: 03.08.26 a 22.08.26 Fase 2: 07.09.26 a 26.09.26
+      (Alternativa); area: NOVO PROGRESSO - PA; local: SBCC'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-noe-gaviao-2026-fase-2-2026-09-08
+  descricao: EXERCICIO TECNICO NOE GAVIAO - 2026 Fase 2
+  om_destino:
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: 1o/11o GAV
+  local_desdobramento_icao:
+  - SBRF
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-09-08'
+  data_termino_oficial: '2026-10-02'
+  data_inicio_planejamento: '2026-09-07'
+  data_termino_planejamento: '2026-10-02'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 85
+    trecho: 'EXERCICIO TECNICO NOE GAVIAO; periodo: Fase 1: 10.08.2026 a 21.08.2026 Fase 2: 08.09.2026
+      a 02.10.2026; area: RECIFE - PE; local: SBRF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-pista-critica-nvg-c-105-fase-sbua-2026-09-08
+  descricao: EXERCICIO TECNICO PISTA CRITICA/NVG C-105 - Fase SBUA
+  om_destino:
+  - BAMN
+  om_diretora: BAMN
+  om_coordenadora: BAMN
+  om_executora: 1o/9o GAV e 1o/15o GAV
+  local_desdobramento_icao:
+  - SBTT
+  - SBUA
+  cidade: Manaus
+  uf: AM
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-09-08'
+  data_termino_oficial: '2026-09-15'
+  data_inicio_planejamento: '2026-09-07'
+  data_termino_planejamento: '2026-09-15'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 91
+    trecho: 'EXERCICIO TECNICO PISTA CRITICA/NVG C-105; periodo: Fase SBUA: 08.09.26 a 15.09.26 Fase SBTT:
+      11.10.26 a 24.10.26 (PME e NVG); area: SAO GABRIEL DA CACHOEIRA-AM e TABATINGA-AM; local: SBUA e
+      SBTT'
+  confianca: alta
+  observacoes: Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar. OM destino
+    inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: desfile-aereo-90-aniversario-babe-2026
+  descricao: Desfile Aereo - 90o Aniversario da Base Aerea de Belem
+  om_destino:
+  - BABE
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Belem
+  uf: PA
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-09-09'
+  data_termino_oficial: '2026-09-11'
+  data_inicio_planejamento: '2026-09-08'
+  data_termino_planejamento: '2026-09-11'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 184
+    trecho: LOCAL Belem - PA DATA 09 a 11.09.26
+  confianca: media
+  observacoes: Registro de Portoes Abertos/Desfile Aereo extraido de quadro resumido.
+- id: exercicio-tecnico-lancamento-aereo-kc-390-26-baaf-fase-6-2026-09-09
+  descricao: EXERCICIO TECNICO LANCAMENTO AEREO KC-390 - 26 (BAAF) Fase 6
+  om_destino:
+  - BAAF
+  - BAAN
+  - BACG
+  - BAGL
+  om_diretora: BAGL
+  om_coordenadora: BAGL
+  om_executora: 1o/1o GT e 1o GTT
+  local_desdobramento_icao:
+  - SBAF
+  - SBAN
+  - SBCG
+  - SBGL
+  cidade: Rio de Janeiro / Anapolis / Campo Grande
+  uf: RJ / GO / MS
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-09-09'
+  data_termino_oficial: '2026-09-21'
+  data_inicio_planejamento: '2026-09-08'
+  data_termino_planejamento: '2026-09-21'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 50
+    trecho: 'EXERCICIO TECNICO LANCAMENTO AEREO KC-390; periodo: Fase 1: 02.02.26 a 06.03.26 (BAAF) Fase
+      2: 02.03.26 a 06.03.25 (BAAN) Fase 3: 02.03.26 a 06.03.25 (BAAF) Fase 4: 06.07.26 a 17.07.25 (BACG)
+      Fase 5: 17.08.26 a 28.08.26 (BAAF) Fase 6: 09.09.26 a 21.09.26 (BAAF'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-operacional-tapio-sentinel-2026-fase-rescue-2026-09-11
+  descricao: EXERCICIO OPERACIONAL TAPIO SENTINEL - 2026 FASE RESCUE
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-09-11'
+  data_termino_oficial: '2026-09-25'
+  data_inicio_planejamento: '2026-09-10'
+  data_termino_planejamento: '2026-09-25'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 37
+    trecho: 'EXERCICIO OPERACIONAL TAPIO SENTINEL; periodo: CDC - 30.09.2025 IPC - 09.02.26 (BR) 10A12.02.26
+      MPC - 11.05.26 (BR) 12.05.26 A 13.05.26 FPC - 29.06.26 (BR) 30.06.26 A 01.07.26 EXERCICIO: FASE
+      WARRIOR 14 A 28.08.2026 FASE RESCUE 11 A 25.09.2026; area: CAMPO GRA'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: operacao-thor-fx-2-026-06-02-2026-com-semana-de-reserva-09-02-2026-a-13-02-2026-periodo-2-p2-2026-09-14
+  descricao: OPERACAO THOR FX-2 - 026 - 06//02/2026 com semana de reserva 09/02/2026 a 13/02/2026 Periodo
+    2 (P2)
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: ''
+  uf: ''
+  categoria_diaria: ''
+  data_inicio_oficial: '2026-09-14'
+  data_termino_oficial: '2026-09-25'
+  data_inicio_planejamento: '2026-09-13'
+  data_termino_planejamento: '2026-09-25'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 124
+    trecho: 'OPERACAO THOR FX-2; periodo: Periodo 1 (P1): 26/01/2026 - 06//02/2026 com semana de reserva
+      09/02/2026 a 13/02/2026 Periodo 2 (P2): 14/09/2026 - 25/09/2026 com semana reserva 28/09/2026 -
+      10/10/2026; area: ; local: Base Aerea de Natal'
+  confianca: media
+  observacoes: ''
+- id: desfile-aereo-eduardo-gomes-2026
+  descricao: Desfile Aereo - 130o Aniversario de nascimento do Marechal Eduardo Gomes
+  om_destino:
+  - BAGL
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Rio de Janeiro
+  uf: RJ
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-09-20'
+  data_termino_oficial: '2026-09-20'
+  data_inicio_planejamento: '2026-09-19'
+  data_termino_planejamento: '2026-09-20'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 184
+    trecho: LOCAL Rio de Janeiro - RJ DATA 20.09.26
+  confianca: media
+  observacoes: Registro de Portoes Abertos/Desfile Aereo extraido de quadro resumido.
+- id: sarex-2026-1-2026-09-21
+  descricao: SAREX 2026
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao:
+  - CYQQ
+  cidade: Comox
+  uf: ''
+  categoria_diaria: ''
+  data_inicio_oficial: '2026-09-21'
+  data_termino_oficial: '2026-09-28'
+  data_inicio_planejamento: '2026-09-20'
+  data_termino_planejamento: '2026-09-28'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 166
+    trecho: 'SAREX 2026; periodo: 21 a 28.09.26; area: ; local: CYQQ - 19 WING - COMMOX'
+  confianca: alta
+  observacoes: ''
+- id: operacoes-aeromoveis-1-2026-09-27
+  descricao: OPERACOES AEROMOVEIS
+  om_destino:
+  - AFA
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao:
+  - SBYS
+  cidade: Pirassununga
+  uf: SP
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-09-27'
+  data_termino_oficial: '2026-10-02'
+  data_inicio_planejamento: '2026-09-26'
+  data_termino_planejamento: '2026-10-02'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 190
+    trecho: 'OPERACOES AEROMOVEIS; periodo: 27 SET A 2 OUT 2026; area: ; local: SBYS'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: operacao-iris-2026-e-fase-2-2026-09-28
+  descricao: OPERACAO IRIS 2026 - e Fase 2
+  om_destino:
+  - BACO
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao:
+  - SBCO
+  cidade: Canoas
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-09-28'
+  data_termino_oficial: '2026-10-09'
+  data_inicio_planejamento: '2026-09-27'
+  data_termino_planejamento: '2026-10-09'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 137
+    trecho: 'OPERACAO IRIS 2026; periodo: Fase 1 - 23 mar a 10 abr 2026; e Fase 2 - 28 set a 09 out 2026.;
+      area: ; local: BACO / SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: operacao-thor-fx-2-02-2026-a-13-02-2026-periodo-2-p2-14-09-2026-25-09-2026-com-semana-reserva-2026-09-28
+  descricao: 'OPERACAO THOR FX-2 - 02/2026 a 13/02/2026 Periodo 2 (P2): 14/09/2026 - 25/09/2026 com semana
+    reserva'
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: ''
+  uf: ''
+  categoria_diaria: ''
+  data_inicio_oficial: '2026-09-28'
+  data_termino_oficial: '2026-10-10'
+  data_inicio_planejamento: '2026-09-27'
+  data_termino_planejamento: '2026-10-10'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 124
+    trecho: 'OPERACAO THOR FX-2; periodo: Periodo 1 (P1): 26/01/2026 - 06//02/2026 com semana de reserva
+      09/02/2026 a 13/02/2026 Periodo 2 (P2): 14/09/2026 - 25/09/2026 com semana reserva 28/09/2026 -
+      10/10/2026; area: ; local: Base Aerea de Natal'
+  confianca: media
+  observacoes: ''
+- id: avaop-irst-do-f-39-2026-etapa-2-execucao-2026-10-04
+  descricao: AVAOP - IRST do F-39 - 2026 Etapa 2 (Execucao)
+  om_destino:
+  - BAAN
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: 1o GDA, 1o GAVCA e IAOp
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-10-04'
+  data_termino_oficial: '2026-10-24'
+  data_inicio_planejamento: '2026-10-03'
+  data_termino_planejamento: '2026-10-24'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 162
+    trecho: 'AVAOP - IRST do F-39; periodo: Etapa 1 (Precursora) - 02.08.2026 a 08.08.2026 Etapa 2 (Execucao)
+      - 04.10.2026 a 24.10.2026; area: ANAPOLIS - GO (Etapas 1 e 2); local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-rdr-1600-modo-search-do-h-36-2026-fase-2-execucao-2026-10-04
+  descricao: AVAOP - RDR-1600 MODO SEARCH do H-36 - 2026 Fase 2 (Execucao)
+  om_destino:
+  - BANT
+  om_diretora: IAOP
+  om_coordenadora: IAOP
+  om_executora: 1o/8 o GAV, CLBI e IAOp
+  local_desdobramento_icao:
+  - SBNT
+  cidade: Parnamirim
+  uf: RN
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-10-04'
+  data_termino_oficial: '2026-10-24'
+  data_inicio_planejamento: '2026-10-03'
+  data_termino_planejamento: '2026-10-24'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 160
+    trecho: 'AVAOP - RDR-1600 MODO SEARCH do H-36; periodo: Fase 1 (Precursora) - 02.08.2026 a 08.08.2026
+      Fase 2 (Execucao) - 04.10.2026 a 24.10.2026; area: PARNAMIRIM - RN (Etapas 1 e 2); local: SBNT'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: avaop-sar-do-lessonia-2026-etapa-2-execucao-2026-10-04
+  descricao: AVAOP - SAR do LESSONIA - 2026 Etapa 2 (Execucao)
+  om_destino:
+  - BABR
+  om_diretora: IAOp
+  om_coordenadora: IAOp
+  om_executora: COMAE e IAOp
+  local_desdobramento_icao:
+  - SBBR
+  cidade: Brasilia
+  uf: DF
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-10-04'
+  data_termino_oficial: '2026-10-24'
+  data_inicio_planejamento: '2026-10-03'
+  data_termino_planejamento: '2026-10-24'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 158
+    trecho: 'AVAOP - SAR do LESSONIA; periodo: Etapa 1 (Precursora) - 02.08.2026 a 08.08.2026 Etapa 2
+      (Execucao) - 04.10.2026 a 24.10.2026; area: BRASILIA - DF (Etapas 1 e 2); local: SBBR'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-rumba-ivr-26-fase-2-2026-10-05
+  descricao: EXERCICIO TECNICO RUMBA IVR - 26 Fase 2
+  om_destino:
+  - BABE
+  - BACO
+  - BANT
+  om_diretora: BANT
+  om_coordenadora: BANT
+  om_executora: 2o/7o GAV, 3o/7o GAV e 1o/5o GAV
+  local_desdobramento_icao:
+  - SBBE
+  - SBCO
+  - SBNT
+  cidade: Belem / Canoas / Parnamirim
+  uf: PA / RS / RN
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-10-05'
+  data_termino_oficial: '2026-10-16'
+  data_inicio_planejamento: '2026-10-04'
+  data_termino_planejamento: '2026-10-16'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 87
+    trecho: 'EXERCICIO TECNICO RUMBA IVR; periodo: Fase Teorica: 17.08.26 a 26.08.26 Fase 1: 31.08.26
+      a 02.10.26 Fase 2: 05.10.26 a 16.10.26; area: NATAL - RN/ BELEM - PA/ CANOAS - RS; local: SBNT/SBBE/SBCO'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+    Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar.
+- id: exercicio-tecnico-pista-critica-nvg-c-105-26-fase-sbtt-2026-10-11
+  descricao: EXERCICIO TECNICO PISTA CRITICA/NVG C-105 - 26 Fase SBTT
+  om_destino:
+  - BAMN
+  om_diretora: BAMN
+  om_coordenadora: BAMN
+  om_executora: 1o/9o GAV e 1o/15o GAV
+  local_desdobramento_icao:
+  - SBTT
+  - SBUA
+  cidade: Manaus
+  uf: AM
+  categoria_diaria: ESPECIAL
+  data_inicio_oficial: '2026-10-11'
+  data_termino_oficial: '2026-10-24'
+  data_inicio_planejamento: '2026-10-10'
+  data_termino_planejamento: '2026-10-24'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 91
+    trecho: 'EXERCICIO TECNICO PISTA CRITICA/NVG C-105; periodo: Fase SBUA: 08.09.26 a 15.09.26 Fase SBTT:
+      11.10.26 a 24.10.26 (PME e NVG); area: SAO GABRIEL DA CACHOEIRA-AM e TABATINGA-AM; local: SBUA e
+      SBTT'
+  confianca: alta
+  observacoes: Multiplos locais de desdobramento informados; conferir OM/cidade ao selecionar. OM destino
+    inferida automaticamente por mapeamento de OM/base local -> cidade/UF.
+- id: exercicio-tecnico-ar-solo-f-5m-1-2026-10-13
+  descricao: EXERCICIO TECNICO AR-SOLO F-5M
+  om_destino:
+  - BASM
+  om_diretora: BACO
+  om_coordenadora: BACO
+  om_executora: 1o/14o GAV, 1o GAVCA e BASM
+  local_desdobramento_icao:
+  - SBSM
+  cidade: Santa Maria
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-10-13'
+  data_termino_oficial: '2026-10-30'
+  data_inicio_planejamento: '2026-10-12'
+  data_termino_planejamento: '2026-10-30'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 93
+    trecho: 'EXERCICIO TECNICO AR-SOLO F-5M; periodo: 13.10.26 a 30.10.26; area: SAICA - RS; local: SBSM'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-revo-ca-1-2026-10-13
+  descricao: EXERCICIO TECNICO REVO-CA
+  om_destino:
+  - BASM
+  om_diretora: BASM
+  om_coordenadora: BASM
+  om_executora: 1o/1oGT, 1o GTT, 1o/14o GAV, 1o GAVCA, 1o/10o GAV
+  local_desdobramento_icao:
+  - SBSM
+  cidade: Santa Maria
+  uf: RS
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-10-13'
+  data_termino_oficial: '2026-10-30'
+  data_inicio_planejamento: '2026-10-12'
+  data_termino_planejamento: '2026-10-30'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 95
+    trecho: 'EXERCICIO TECNICO REVO-CA; periodo: 13.10.26 a 30.10.26; area: SANTA MARIA - RS; local: SBSM'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-tecnico-maffs-1-2026-10-19
+  descricao: EXERCICIO TECNICO MAFFS
+  om_destino:
+  - BAAN
+  om_diretora: BAAN
+  om_coordenadora: BAAN
+  om_executora: 1o GTT
+  local_desdobramento_icao:
+  - SBAN
+  cidade: Anapolis
+  uf: GO
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-10-19'
+  data_termino_oficial: '2026-10-30'
+  data_inicio_planejamento: '2026-10-18'
+  data_termino_planejamento: '2026-10-30'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 97
+    trecho: 'EXERCICIO TECNICO MAFFS; periodo: 19.10.26 a 30.10.26; area: ANAPOLIS - GO; local: SBAN'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-operacional-nuntius-26-vc-exercicio-preparacao-2026-10-26
+  descricao: EXERCICIO OPERACIONAL NUNTIUS - 26 (VC) Exercicio (preparacao)
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: EAS, 3o/3o GAV, 2o/10o GAV e 1o/10o GAV
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-10-26'
+  data_termino_oficial: '2026-10-31'
+  data_inicio_planejamento: '2026-10-25'
+  data_termino_planejamento: '2026-10-31'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 41
+    trecho: 'EXERCICIO OPERACIONAL NUNTIUS; periodo: IPC: 23.03.26 (VC) MPC: 03.08.26 (VC) FPC: 19.10.26
+      (VC) Exercicio (preparacao): 26.10.26 a 31.10.26 Exercicio Fase 1 (parte teorica): 01.11.26 a 11.11.26
+      Exercicio Fase 2 (parte pratica): 12.11.26 a 27.11.26; area: CAMP'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-operacional-carranca-26-exercicio-2026-10-29
+  descricao: EXERCICIO OPERACIONAL CARRANCA - 26 EXERCICIO
+  om_destino:
+  - BAFL
+  om_diretora: BACO
+  om_coordenadora: BACO
+  om_executora: CONFORME LISTADO ABAIXO
+  local_desdobramento_icao:
+  - SBFL
+  cidade: Florianopolis
+  uf: SC
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-10-29'
+  data_termino_oficial: '2026-11-14'
+  data_inicio_planejamento: '2026-10-28'
+  data_termino_planejamento: '2026-11-14'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 43
+    trecho: 'EXERCICIO OPERACIONAL CARRANCA; periodo: CDC - 16.01.2026 IPC - 05.05.26 a 07.05.26 MPC -
+      28.07.26 a 30.07.26 FPC - 01.09.26 a 03.09.26 EXERCICIO - 29.10.26 a 14.11.26; area: FLORIANOPOLIS
+      - SC; local: SBFL'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-operacional-nuntius-26-exercicio-fase-1-parte-teorica-2026-11-01
+  descricao: EXERCICIO OPERACIONAL NUNTIUS - 26 Exercicio Fase 1 (parte teorica)
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: EAS, 3o/3o GAV, 2o/10o GAV e 1o/10o GAV
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-11-01'
+  data_termino_oficial: '2026-11-11'
+  data_inicio_planejamento: '2026-10-31'
+  data_termino_planejamento: '2026-11-11'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 41
+    trecho: 'EXERCICIO OPERACIONAL NUNTIUS; periodo: IPC: 23.03.26 (VC) MPC: 03.08.26 (VC) FPC: 19.10.26
+      (VC) Exercicio (preparacao): 26.10.26 a 31.10.26 Exercicio Fase 1 (parte teorica): 01.11.26 a 11.11.26
+      Exercicio Fase 2 (parte pratica): 12.11.26 a 27.11.26; area: CAMP'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: exercicio-operacional-nuntius-26-exercicio-fase-2-parte-pratica-2026-11-12
+  descricao: EXERCICIO OPERACIONAL NUNTIUS - 26 Exercicio Fase 2 (parte pratica)
+  om_destino:
+  - BACG
+  om_diretora: BACG
+  om_coordenadora: BACG
+  om_executora: EAS, 3o/3o GAV, 2o/10o GAV e 1o/10o GAV
+  local_desdobramento_icao:
+  - SBCG
+  cidade: Campo Grande
+  uf: MS
+  categoria_diaria: CAPITAL
+  data_inicio_oficial: '2026-11-12'
+  data_termino_oficial: '2026-11-27'
+  data_inicio_planejamento: '2026-11-11'
+  data_termino_planejamento: '2026-11-27'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 41
+    trecho: 'EXERCICIO OPERACIONAL NUNTIUS; periodo: IPC: 23.03.26 (VC) MPC: 03.08.26 (VC) FPC: 19.10.26
+      (VC) Exercicio (preparacao): 26.10.26 a 31.10.26 Exercicio Fase 1 (parte teorica): 01.11.26 a 11.11.26
+      Exercicio Fase 2 (parte pratica): 12.11.26 a 27.11.26; area: CAMP'
+  confianca: alta
+  observacoes: OM destino inferida automaticamente por mapeamento local_desdobramento_icao -> OM FAB.
+- id: desfile-aereo-cpcar-2026
+  descricao: Desfile Aereo - Conclusao do Curso Preparatorio de Cadetes do Ar
+  om_destino: []
+  om_diretora: ''
+  om_coordenadora: ''
+  om_executora: ''
+  local_desdobramento_icao: []
+  cidade: Barbacena
+  uf: MG
+  categoria_diaria: PADRAO
+  data_inicio_oficial: '2026-12-04'
+  data_termino_oficial: '2026-12-04'
+  data_inicio_planejamento: '2026-12-03'
+  data_termino_planejamento: '2026-12-04'
+  fonte:
+    documento: ICA 55-87 - Programa de Atividades Operacionais do COMPREP - 2026
+    pagina: 185
+    trecho: LOCAL Barbacena - MG DATA 04.12.26
+  confianca: media
+  observacoes: Registro de Portoes Abertos/Desfile Aereo extraido de quadro resumido.
