@@ -384,7 +384,7 @@ def _coletar_militar() -> Militar:
         console.print("  Nome não pode ser vazio.", style="bold red")
         nome = _ask_text("Nome completo (sem abreviações):")
 
-    nome_guerra = _ask_text("Nome de guerra (ex: MOLON):")
+    nome_guerra = _ask_text("Nome de guerra:")
 
     saram = ""
     while True:
