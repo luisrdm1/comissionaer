@@ -388,7 +388,7 @@ def _coletar_militar() -> Militar:
 
     saram = ""
     while True:
-        saram_input = _ask_text("SARAM (formato NNNNNN-X):")
+        saram_input = _ask_text("SARAM (formato NNNNNN-X, ex: 123456-7):")
         saram_input = saram_input.strip().upper()
         if _validar_saram(saram_input):
             saram = saram_input
@@ -457,7 +457,7 @@ def _coletar_militar() -> Militar:
                 militar.nome_guerra = _ask_text("Nome de guerra:", default=militar.nome_guerra)
             elif acao == _CAMPO_SARAM:
                 while True:
-                    saram_input = _ask_text("SARAM (formato NNNNNN-X):", default=militar.saram)
+                    saram_input = _ask_text("SARAM (formato NNNNNN-X, ex: 123456-7):", default=militar.saram)
                     saram_input = saram_input.strip().upper()
                     if _validar_saram(saram_input):
                         militar.saram = saram_input
