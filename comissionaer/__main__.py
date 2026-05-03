@@ -60,6 +60,14 @@ def _listar_catalogo_ica() -> None:
 
 
 def main() -> None:
+    try:
+        _main()
+    except (KeyboardInterrupt, EOFError):
+        console.print("\n[bold red]Abortado.[/bold red]")
+        sys.exit(130)
+
+
+def _main() -> None:
     console.print(
         Panel.fit(
             "[bold cyan]ComissionAER[/bold cyan] — Análise de Economicidade de Comissionamento\n"

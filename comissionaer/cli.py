@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import contextlib
+import time
 from collections.abc import Iterator
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any
+from typing import cast
 from unicodedata import normalize as _unicode_normalize
 
 import questionary
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document as PromptDocument
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.key_binding.key_bindings import KeyBindingsBase, merge_key_bindings
+from prompt_toolkit.key_binding.key_processor import KeyPressEvent
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -44,29 +48,69 @@ class _Cancelado(Exception):
     """Usuário pressionou ESC — sobe um nível em vez de sair do programa."""
 
 
+class _EscSentinel:
+    """Valor sentinela retornado quando ESC é pressionado num prompt."""
+
+
+_ESC_SENTINEL = _EscSentinel()
+
+_ESC_KEYBINDINGS = KeyBindings()
+
+
+def _esc_handler(event: KeyPressEvent) -> None:
+    event.app.exit(result=_ESC_SENTINEL)
+
+
+_ESC_KEYBINDINGS.add("escape")(_esc_handler)
+
+
+_ESC_EXIT_TIMEOUT = 3.0
+
+
 # ---------------------------------------------------------------------------
 # Helpers tipados sobre questionary
 # ---------------------------------------------------------------------------
 
 
+def _register_esc(q: questionary.Question) -> None:
+    app = q.application
+    merged = merge_key_bindings([cast(KeyBindingsBase, app.key_bindings), _ESC_KEYBINDINGS])
+    app.key_bindings = merged
+
+
 def _ask_select(message: str, choices: list[str]) -> str:
-    result: Any = questionary.select(message, choices=choices).ask()
-    if result is None:
+    q = questionary.select(message, choices=choices)
+    _register_esc(q)
+    result = q.ask()
+    if result is _ESC_SENTINEL:
         raise _Cancelado
+    if result is None:
+        console.print("\n[bold red]Abortado.[/bold red]")
+        raise SystemExit(130)
     return str(result)
 
 
 def _ask_text(message: str, default: str = "") -> str:
-    result: Any = questionary.text(message, default=default).ask()
-    if result is None:
+    q = questionary.text(message, default=default)
+    _register_esc(q)
+    result = q.ask()
+    if result is _ESC_SENTINEL:
         raise _Cancelado
+    if result is None:
+        console.print("\n[bold red]Abortado.[/bold red]")
+        raise SystemExit(130)
     return str(result).strip()
 
 
 def _ask_confirm(message: str, default: bool = True) -> bool:
-    result: Any = questionary.confirm(message, default=default).ask()
-    if result is None:
+    q = questionary.confirm(message, default=default)
+    _register_esc(q)
+    result = q.ask()
+    if result is _ESC_SENTINEL:
         raise _Cancelado
+    if result is None:
+        console.print("\n[bold red]Abortado.[/bold red]")
+        raise SystemExit(130)
     return bool(result)
 
 
@@ -354,22 +398,18 @@ def _coletar_militar() -> Militar:
     # revisão com edição campo a campo; ESC no menu do campo = cancelar edição
     while True:
         _tabela_militar(militar)
-        try:
-            acao = _ask_select(
-                "Dados do militar:",
-                choices=[
-                    _CONFIRMAR,
-                    _CAMPO_POSTO,
-                    _CAMPO_NOME,
-                    _CAMPO_HABILITACAO,
-                    _CAMPO_DEPENDENTES,
-                    _CAMPO_COMP_ORG,
-                    _CAMPO_ENCERRAMENTO,
-                ],
-            )
-        except _Cancelado:
-            return militar  # ESC no menu de revisão = confirmar como está
-
+        acao = _ask_select(
+            "Dados do militar:",
+            choices=[
+                _CONFIRMAR,
+                _CAMPO_POSTO,
+                _CAMPO_NOME,
+                _CAMPO_HABILITACAO,
+                _CAMPO_DEPENDENTES,
+                _CAMPO_COMP_ORG,
+                _CAMPO_ENCERRAMENTO,
+            ],
+        )
         if acao == _CONFIRMAR:
             return militar
 
@@ -469,16 +509,21 @@ def _selecionar_missao_catalogo() -> MissaoCatalogoICA:
     )
 
     while True:
-        result: Any = questionary.autocomplete(
+        q = questionary.autocomplete(
             "  Missão:",
             choices=[],
             completer=completer,
             style=_FZF_STYLE,
-        ).ask()
-        if result is None:
+        )
+        _register_esc(q)
+        result = q.ask()
+        if result is _ESC_SENTINEL:
             raise _Cancelado
-        if result in missoes_map:
-            return missoes_map[result]
+        if result is None:
+            console.print("\n[bold red]Abortado.[/bold red]")
+            raise SystemExit(130)
+        if str(result) in missoes_map:
+            return missoes_map[str(result)]
         console.print("  Selecione uma das opções da lista.", style="bold red")
 
 
@@ -509,11 +554,7 @@ _CAMPOS_MISSAO = [
 def _revisar_missao(missao: Missao) -> Missao:
     while True:
         _tabela_missao(missao)
-        try:
-            acao = _ask_select("Dados da missão:", choices=_CAMPOS_MISSAO)
-        except _Cancelado:
-            return missao  # ESC no menu de revisão = confirmar como está
-
+        acao = _ask_select("Dados da missão:", choices=_CAMPOS_MISSAO)
         if acao == _CONFIRMAR:
             return missao
 
@@ -629,8 +670,10 @@ _ACAO_REMOVER = "Remover missão"
 def _coletar_nova_missao() -> Missao:
     origem = _ask_select(
         "  Origem dos dados da missão:",
-        choices=["Catálogo ICA 55-87/2026", "Informar manualmente"],
+        choices=["Catálogo ICA 55-87/2026", "Informar manualmente", "Sair"],
     )
+    if origem == "Sair":
+        raise _Cancelado
     return _coletar_missao_catalogo() if origem.startswith("Catálogo") else _coletar_missao_manual()
 
 
@@ -643,18 +686,15 @@ def _coletar_missoes(militar: Militar) -> list[Missao]:
         try:
             missoes.append(_coletar_nova_missao())
         except _Cancelado:
-            console.print("  Informe pelo menos uma missão.", style="bold red")
+            raise
 
     while True:
         _tabela_lista_missoes(missoes, militar)
 
-        try:
-            acao = _ask_select(
-                "O que deseja fazer?",
-                choices=[_ACAO_CONFIRMAR_LISTA, _ACAO_ADICIONAR, _ACAO_EDITAR, _ACAO_REMOVER],
-            )
-        except _Cancelado:
-            return sorted(missoes, key=lambda m: m.data_inicio)
+        acao = _ask_select(
+            "O que deseja fazer?",
+            choices=[_ACAO_CONFIRMAR_LISTA, _ACAO_ADICIONAR, _ACAO_EDITAR, _ACAO_REMOVER],
+        )
 
         if acao == _ACAO_CONFIRMAR_LISTA:
             return sorted(missoes, key=lambda m: m.data_inicio)
@@ -741,18 +781,28 @@ def _pedir_nome_arquivo(nome_militar: str, posto: Posto) -> str:
 
 def coletar_dados() -> tuple[Militar, list[Missao], str]:
     """Ponto de entrada do fluxo interativo. Retorna (militar, missoes, caminho_pdf)."""
-    try:
-        militar = _coletar_militar()
-        missoes = _coletar_missoes(militar)
-        _aplicar_periodo_comissionamento(militar, missoes)
-        console.print(
-            f"\nTotal de dias em missões planejadas: {dias_missoes(missoes)}.",
-            style="bold green",
-        )
-        caminho = _pedir_nome_arquivo(militar.nome, militar.posto)
-        return militar, missoes, caminho
-    except _Cancelado:
-        raise SystemExit(0) from None
+    esc_last_time = 0.0
+    while True:
+        try:
+            militar = _coletar_militar()
+            missoes = _coletar_missoes(militar)
+            _aplicar_periodo_comissionamento(militar, missoes)
+            console.print(
+                f"\nTotal de dias em missões planejadas: {dias_missoes(missoes)}.",
+                style="bold green",
+            )
+            caminho = _pedir_nome_arquivo(militar.nome, militar.posto)
+            return militar, missoes, caminho
+        except _Cancelado:
+            now = time.time()
+            if now - esc_last_time < _ESC_EXIT_TIMEOUT:
+                console.print("\n[yellow]Saindo...[/yellow]")
+                raise SystemExit(0) from None
+            esc_last_time = now
+            console.print(
+                "\n[yellow]Pressione ESC novamente dentro de 3 segundos para sair, "
+                "ou continue navegando.[/yellow]"
+            )
 
 
 def perguntar_salvar_yaml(caminho_pdf: str) -> str | None:
