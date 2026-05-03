@@ -389,8 +389,12 @@ def extract_ranges(periodo: str) -> list[dict[str, object]]:
     ranges: list[dict[str, object]] = []
     spans: list[tuple[int, int]] = []
     patterns = [
-        re.compile(r"(\d{1,2})[./](\d{1,2})[./](\d{2,4})\s*(?:a|A|À|-|–)\s*(\d{1,2})[./](\d{1,2})[./](\d{2,4})"),
-        re.compile(r"(\d{1,2})[./](\d{1,2})[./](\d{2,4})\s*(?:a|A|À|-|–)\s*(\d{1,2})[./](\d{1,2})\b"),
+        re.compile(
+            r"(\d{1,2})[./](\d{1,2})[./](\d{2,4})\s*(?:a|A|À|-|–)\s*(\d{1,2})[./](\d{1,2})[./](\d{2,4})"
+        ),
+        re.compile(
+            r"(\d{1,2})[./](\d{1,2})[./](\d{2,4})\s*(?:a|A|À|-|–)\s*(\d{1,2})[./](\d{1,2})\b"
+        ),
         re.compile(r"(\d{1,2})\s*(?:a|A|À|-|–)\s*(\d{1,2})[./](\d{1,2})[./](\d{2,4})"),
     ]
     for pattern in patterns:
@@ -411,7 +415,9 @@ def extract_ranges(periodo: str) -> list[dict[str, object]]:
             spans.append((match.start(), match.end()))
 
     month_patterns = [
-        re.compile(r"(\d{1,2})\s+([A-Za-zÇç]{3,9})\s+(?:a|A|À|-|–)\s+(\d{1,2})\s+([A-Za-zÇç]{3,9})\s+(\d{2,4})"),
+        re.compile(
+            r"(\d{1,2})\s+([A-Za-zÇç]{3,9})\s+(?:a|A|À|-|–)\s+(\d{1,2})\s+([A-Za-zÇç]{3,9})\s+(\d{2,4})"
+        ),
         re.compile(r"(\d{1,2})\s+(?:a|A|À|-|–)\s+(\d{1,2})\s+([A-Za-zÇç]{3,9})\s+(\d{2,4})"),
     ]
     for pattern in month_patterns:
@@ -767,9 +773,7 @@ def build_catalog(pdf_path: Path) -> dict[str, object]:
                 "Campos data_inicio_planejamento/data_termino_planejamento aplicam D-1 "
                 "no inicio para deslocamento; termino igual ao oficial."
             ),
-            "fases": (
-                "Fases/etapas com periodos proprios sao registradas como missoes separadas."
-            ),
+            "fases": ("Fases/etapas com periodos proprios sao registradas como missoes separadas."),
             "icao": (
                 "local_desdobramento_icao armazena designativos ICAO de "
                 "aerodromos/localidades, separado de OM."

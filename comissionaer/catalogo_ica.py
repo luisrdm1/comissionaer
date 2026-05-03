@@ -58,9 +58,9 @@ class FonteCatalogoICA:
 @dataclass(frozen=True)
 class MissaoCatalogoICA:
     id: str
-    tipo: TipoMissao | None   # None = tipo desconhecido no YAML
-    nome: str                 # nome próprio em Title Case
-    fase: str | None          # fase/etapa; None quando não aplicável
+    tipo: TipoMissao | None  # None = tipo desconhecido no YAML
+    nome: str  # nome próprio em Title Case
+    fase: str | None  # fase/etapa; None quando não aplicável
     ano: int | None
     om_destino: tuple[str, ...]
     om_diretora: str

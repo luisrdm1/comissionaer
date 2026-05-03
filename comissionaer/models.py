@@ -8,21 +8,22 @@ from enum import Enum
 
 
 class Posto(Enum):
-    SEGUNDO_TENENTE = "2º Ten"
-    PRIMEIRO_TENENTE = "1º Ten"
-    CAPITAO = "Cap"
-    MAJOR = "Maj"
+    TENENTE_BRIGADEIRO = "TB"
+    MAJOR_BRIGADEIRO = "MB"
+    BRIGADEIRO = "BR"
+    CORONEL = "CL"
     TENENTE_CORONEL = "TC"
-    CORONEL = "Cel"
-    BRIGADEIRO = "Brig"
-    MAJOR_BRIGADEIRO = "Maj Brig"
-    TENENTE_BRIGADEIRO = "Ten Brig"
+    MAJOR = "MJ"
+    CAPITAO = "CP"
+    PRIMEIRO_TENENTE = "1T"
+    SEGUNDO_TENENTE = "2T"
     SUBOFICIAL = "SO"
-    PRIMEIRO_SARGENTO = "1º Sgt"
-    SEGUNDO_SARGENTO = "2º Sgt"
-    TERCEIRO_SARGENTO = "3º Sgt"
-    CABO = "Cb"
-    SOLDADO = "Sd"
+    PRIMEIRO_SARGENTO = "1S"
+    SEGUNDO_SARGENTO = "2S"
+    TERCEIRO_SARGENTO = "3S"
+    CABO = "CB"
+    SOLDADO_1_CLASSE = "S1"
+    SOLDADO_2_CLASSE = "S2"
 
 
 class Habilitacao(Enum):
