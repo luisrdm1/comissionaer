@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
+from enum import Enum
 from importlib import resources
 from typing import cast
 from unicodedata import normalize
@@ -14,6 +15,37 @@ import yaml
 from comissionaer.models import CategoriaDiaria, Missao
 
 _CATALOGO_ARQUIVO = "missoes_ica_55_87_2026.yaml"
+
+
+class TipoMissao(Enum):
+    EXCON = "EXCON"
+    EXOP = "EXOP"
+    EXTEC = "EXTEC"
+    AVAOP = "AVAOP"
+    AVOP = "AVOP"
+    OPERACAO = "OPERACAO"
+    REUNIAO = "REUNIAO"
+    DESFILE = "DESFILE"
+    INSTRUCAO = "INSTRUCAO"
+    PORTOES = "PORTOES"
+
+
+# Prefixo legível por tipo — usado na propriedade descricao
+_TIPO_PREFIX: dict[TipoMissao, str] = {
+    TipoMissao.EXCON: "Ex Conj",
+    TipoMissao.EXOP: "Ex Op",
+    TipoMissao.EXTEC: "Ex Téc",
+    TipoMissao.AVAOP: "AVAOP",
+    TipoMissao.AVOP: "AVOP",
+    TipoMissao.OPERACAO: "Operação",
+    TipoMissao.REUNIAO: "Reunião",
+    TipoMissao.DESFILE: "Desfile Aéreo",
+    TipoMissao.INSTRUCAO: "Instrução",
+    TipoMissao.PORTOES: "Portões Abertos",
+}
+
+# Para esses tipos, nome é um título distinto → usa ' – ' como separador
+_TIPO_SEP_NOME: frozenset[TipoMissao] = frozenset({TipoMissao.DESFILE, TipoMissao.PORTOES})
 
 
 @dataclass(frozen=True)
@@ -26,7 +58,10 @@ class FonteCatalogoICA:
 @dataclass(frozen=True)
 class MissaoCatalogoICA:
     id: str
-    descricao: str
+    tipo: TipoMissao | None   # None = tipo desconhecido no YAML
+    nome: str                 # nome próprio em Title Case
+    fase: str | None          # fase/etapa; None quando não aplicável
+    ano: int | None
     om_destino: tuple[str, ...]
     om_diretora: str
     om_coordenadora: str
@@ -42,6 +77,19 @@ class MissaoCatalogoICA:
     fonte: FonteCatalogoICA
     confianca: str
     observacoes: str
+
+    @property
+    def descricao(self) -> str:
+        if self.tipo is None:
+            return self.nome
+        prefix = _TIPO_PREFIX.get(self.tipo, self.tipo.value)
+        sep = " – " if self.tipo in _TIPO_SEP_NOME else " "
+        partes = [f"{prefix}{sep}{self.nome}"]
+        if self.fase:
+            partes.append(f"– {self.fase}")
+        if self.ano:
+            partes.append(f"({self.ano})")
+        return " ".join(partes)
 
 
 @dataclass(frozen=True)
@@ -101,6 +149,15 @@ def _int(value: object, campo: str) -> int:
     raise ValueError(f"Campo {campo} deve ser um inteiro.")
 
 
+def _tipo(value: object) -> TipoMissao | None:
+    if value is None:
+        return None
+    try:
+        return TipoMissao(str(value).upper())
+    except ValueError:
+        return None  # valor desconhecido no YAML → None
+
+
 def _categoria(value: object) -> CategoriaDiaria | None:
     if value is None:
         return None
@@ -129,9 +186,19 @@ def _missao(value: object) -> MissaoCatalogoICA:
     mapping = _as_mapping(value, "missoes[]")
     missao_id = str(_required(mapping, "id", "missao"))
     contexto = f"missao {missao_id}"
+
+    nome = str(_required(mapping, "nome", contexto))
+    fase_raw = mapping.get("fase")
+    fase = str(fase_raw) if fase_raw is not None else None
+    ano_raw = mapping.get("ano")
+    ano = _int(ano_raw, f"{contexto}.ano") if ano_raw is not None else None
+
     return MissaoCatalogoICA(
         id=missao_id,
-        descricao=str(_required(mapping, "descricao", contexto)),
+        tipo=_tipo(mapping.get("tipo")),
+        nome=nome,
+        fase=fase,
+        ano=ano,
         om_destino=_str_list(mapping.get("om_destino"), f"{contexto}.om_destino"),
         om_diretora=_optional_str(mapping, "om_diretora"),
         om_coordenadora=_optional_str(mapping, "om_coordenadora"),
@@ -210,6 +277,8 @@ def buscar_missoes_catalogo(
         campos_texto = (
             missao.id,
             missao.descricao,
+            missao.nome,
+            missao.tipo.value if missao.tipo else "",
             missao.cidade,
             missao.uf,
             *missao.om_destino,

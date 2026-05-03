@@ -13,8 +13,10 @@ import questionary
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document as PromptDocument
 from rich.console import Console
+from rich.panel import Panel
 from rich.table import Table
 
+from comissionaer import calc
 from comissionaer.catalogo_ica import (
     MissaoCatalogoICA,
     carregar_catalogo_ica_55_87_2026,
@@ -27,7 +29,8 @@ from comissionaer.models import (
     Militar,
     Missao,
     Posto,
-    classificar_ajuda_custo,
+    ResultadoMissao,
+    classificar_ajuda_custo_por_dias,
     dias_missoes,
     dias_periodo,
     periodo_missoes,
@@ -98,6 +101,15 @@ def _pct_to_cotas(pct: Decimal) -> int:
     return int(pct * 50)
 
 
+def _fmt_brl(v: Decimal) -> str:
+    formatted = f"{v:,.2f}"
+    return "R$ " + formatted.replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def _fmt_fator(v: Decimal) -> str:
+    return f"{v:g}".replace(".", ",")
+
+
 # ---------------------------------------------------------------------------
 # Tabelas de revisão (Rich)
 # ---------------------------------------------------------------------------
@@ -154,28 +166,97 @@ def _tabela_missao(m: Missao, titulo: str = "Missão") -> None:
     console.print(t)
 
 
-def _tabela_lista_missoes(missoes: list[Missao]) -> None:
+def _missoes_concomitantes(missoes: list[Missao]) -> list[tuple[int, int]]:
+    pares: list[tuple[int, int]] = []
+    for i in range(len(missoes)):
+        for j in range(i + 1, len(missoes)):
+            a, b = missoes[i], missoes[j]
+            if a.data_inicio <= b.data_termino and b.data_inicio <= a.data_termino:
+                pares.append((i, j))
+    return pares
+
+
+def _tabela_lista_missoes(missoes: list[Missao], militar: Militar | None = None) -> None:
+    conflitos = _missoes_concomitantes(missoes)
+    idxs_conflito: set[int] = {i for par in conflitos for i in par}
+
+    resultados: list[ResultadoMissao] | None = None
+    if militar is not None:
+        resultados = [calc.calcular_missao(m, militar.posto) for m in missoes]
+
     t = Table(title=f"Missões ({len(missoes)})", show_header=True, padding=(0, 1))
     t.add_column("#", style="bold", justify="right")
-    t.add_column("Descrição")
+    t.add_column("Descrição", max_width=42, no_wrap=False)
     t.add_column("OM")
     t.add_column("Local")
     t.add_column("Início")
     t.add_column("Término")
     t.add_column("Dias", justify="right")
-    for i, m in enumerate(missoes, 1):
+    if resultados is not None:
+        t.add_column("Diária unit.", justify="right")
+        t.add_column("Total diárias", justify="right")
+        t.add_column("Deslocamento", justify="right")
+        t.add_column("Total missão", justify="right")
+
+    for i, m in enumerate(missoes):
         dias = str((m.data_termino - m.data_inicio).days + 1)
-        t.add_row(
-            str(i),
+        row_style = "bold red" if i in idxs_conflito else ""
+        row: list[str] = [
+            str(i + 1),
             m.descricao,
             m.om_destino,
             f"{m.cidade}/{m.uf}",
             m.data_inicio.strftime("%d/%m/%Y"),
             m.data_termino.strftime("%d/%m/%Y"),
             dias,
-        )
+        ]
+        if resultados is not None:
+            r = resultados[i]
+            row += [
+                _fmt_brl(r.valor_diaria_unitario),
+                _fmt_brl(r.total_diarias),
+                _fmt_brl(r.total_deslocamento),
+                _fmt_brl(r.total),
+            ]
+        t.add_row(*row, style=row_style)
+
     console.print()
     console.print(t)
+
+    if conflitos:
+        pares_str = ", ".join(f"#{a + 1}+#{b + 1}" for a, b in conflitos)
+        console.print(
+            f"  [bold red]Aviso:[/bold red] missões com períodos sobrepostos: {pares_str}.",
+        )
+
+    if militar is not None and resultados is not None:
+        total_dias = dias_missoes(missoes)
+        regime = "LONGO (> 90 dias)" if total_dias > 90 else "CURTO (≤ 90 dias)"
+        faixa = classificar_ajuda_custo_por_dias(total_dias)
+        total_diarias_v = sum((r.total_diarias for r in resultados), Decimal("0"))
+        total_deslocamentos_v = sum((r.total_deslocamento for r in resultados), Decimal("0"))
+        total_geral = total_diarias_v + total_deslocamentos_v
+
+        base = calc.calcular_base(militar)
+        base_enc = calc.calcular_base_encerramento(militar)
+        fator_ida, fator_volta = calc.fatores_ajuda_custo(faixa, militar.dependentes)
+        ajuda_ida = base.total * fator_ida
+        ajuda_volta = base_enc.total * fator_volta
+        ajuda_total = ajuda_ida + ajuda_volta
+
+        linhas = "\n".join(
+            [
+                f"Total de dias de missões:  [bold]{total_dias}[/bold]  —  {regime}",
+                f"Enquadramento:  {faixa.value}",
+                f"Total diárias:  [bold]{_fmt_brl(total_diarias_v)}[/bold]",
+                f"Total deslocamentos:  [bold]{_fmt_brl(total_deslocamentos_v)}[/bold]",
+                f"Total geral:  [bold]{_fmt_brl(total_geral)}[/bold]",
+                f"Ajuda de custo — ida ({_fmt_fator(fator_ida)}×):  {_fmt_brl(ajuda_ida)}",
+                f"Ajuda de custo — volta ({_fmt_fator(fator_volta)}×):  {_fmt_brl(ajuda_volta)}",
+                f"Total ajuda de custo:  [bold]{_fmt_brl(ajuda_total)}[/bold]",
+            ]
+        )
+        console.print(Panel(linhas, title="Resumo do comissionamento", border_style="cyan"))
 
 
 # ---------------------------------------------------------------------------
@@ -527,8 +608,10 @@ def _coletar_missao_manual() -> Missao:
 # Gerenciamento da lista de missões
 # ---------------------------------------------------------------------------
 
-_ACAO_ADICIONAR = "Adicionar missão"
 _ACAO_CONFIRMAR_LISTA = "✓ Confirmar lista de missões"
+_ACAO_ADICIONAR = "Adicionar missão"
+_ACAO_EDITAR = "Editar missão"
+_ACAO_REMOVER = "Remover missão"
 
 
 def _coletar_nova_missao() -> Missao:
@@ -539,7 +622,7 @@ def _coletar_nova_missao() -> Missao:
     return _coletar_missao_catalogo() if origem.startswith("Catálogo") else _coletar_missao_manual()
 
 
-def _coletar_missoes() -> list[Missao]:
+def _coletar_missoes(militar: Militar) -> list[Missao]:
     console.print("\n[bold]=== MISSÕES ===[/bold]")
     missoes: list[Missao] = []
 
@@ -551,14 +634,13 @@ def _coletar_missoes() -> list[Missao]:
             console.print("  Informe pelo menos uma missão.", style="bold red")
 
     while True:
-        _tabela_lista_missoes(missoes)
-
-        opcoes: list[str] = [_ACAO_CONFIRMAR_LISTA, _ACAO_ADICIONAR]
-        opcoes += [f"Editar missão {i + 1} — {m.descricao[:50]}" for i, m in enumerate(missoes)]
-        opcoes += [f"Remover missão {i + 1} — {m.descricao[:50]}" for i, m in enumerate(missoes)]
+        _tabela_lista_missoes(missoes, militar)
 
         try:
-            acao = _ask_select("O que deseja fazer?", choices=opcoes)
+            acao = _ask_select(
+                "O que deseja fazer?",
+                choices=[_ACAO_CONFIRMAR_LISTA, _ACAO_ADICIONAR, _ACAO_EDITAR, _ACAO_REMOVER],
+            )
         except _Cancelado:
             return missoes  # ESC no menu da lista = confirmar como está
 
@@ -573,22 +655,33 @@ def _coletar_missoes() -> list[Missao]:
                 console.print("  Adição cancelada.", style="yellow")
             continue
 
-        if acao.startswith("Editar missão "):
-            idx = int(acao.split()[2]) - 1
-            missoes[idx] = _revisar_missao(missoes[idx])
+        if acao == _ACAO_EDITAR:
+            try:
+                nomes = [m.descricao[:60] for m in missoes]
+                escolha = _ask_select("  Editar qual missão?", choices=nomes)
+                idx = nomes.index(escolha)
+                missoes[idx] = _revisar_missao(missoes[idx])
+            except _Cancelado:
+                pass
             continue
 
-        if acao.startswith("Remover missão "):
-            idx = int(acao.split()[2]) - 1
-            removida = missoes.pop(idx)
-            console.print(f"  Missão '{removida.descricao}' removida.", style="bold yellow")
-            if not missoes:
-                console.print("  Informe pelo menos uma missão.", style="bold red")
-                while not missoes:
-                    try:
-                        missoes.append(_coletar_nova_missao())
-                    except _Cancelado:
-                        console.print("  Informe pelo menos uma missão.", style="bold red")
+        if acao == _ACAO_REMOVER:
+            try:
+                nomes = [m.descricao[:60] for m in missoes]
+                escolha = _ask_select("  Remover qual missão?", choices=nomes)
+                idx = nomes.index(escolha)
+                removida = missoes.pop(idx)
+                console.print(f"  Missão '{removida.descricao}' removida.", style="bold yellow")
+                if not missoes:
+                    console.print("  Informe pelo menos uma missão.", style="bold red")
+                    while not missoes:
+                        try:
+                            missoes.append(_coletar_nova_missao())
+                        except _Cancelado:
+                            console.print("  Informe pelo menos uma missão.", style="bold red")
+            except _Cancelado:
+                pass
+            continue
 
 
 # ---------------------------------------------------------------------------
@@ -599,7 +692,7 @@ def _coletar_missoes() -> list[Missao]:
 def _aplicar_periodo_comissionamento(militar: Militar, missoes: list[Missao]) -> None:
     console.print("\n[bold]=== ENQUADRAMENTO DO COMISSIONAMENTO ===[/bold]")
     inicio, termino = periodo_missoes(missoes)
-    faixa = classificar_ajuda_custo(inicio, termino)
+    faixa = classificar_ajuda_custo_por_dias(dias_missoes(missoes))
     dias_corridos = dias_periodo(inicio, termino)
     militar.data_inicio_comissionamento = inicio
     militar.data_termino_comissionamento = termino
@@ -630,7 +723,7 @@ def coletar_dados() -> tuple[Militar, list[Missao], str]:
     """Ponto de entrada do fluxo interativo. Retorna (militar, missoes, caminho_pdf)."""
     try:
         militar = _coletar_militar()
-        missoes = _coletar_missoes()
+        missoes = _coletar_missoes(militar)
         _aplicar_periodo_comissionamento(militar, missoes)
         console.print(
             f"\nTotal de dias em missões planejadas: {dias_missoes(missoes)}.",

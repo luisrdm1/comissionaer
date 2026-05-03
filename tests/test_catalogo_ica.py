@@ -11,7 +11,7 @@ from comissionaer.models import CategoriaDiaria
 def test_carrega_catalogo_ica_55_87_2026() -> None:
     catalogo = carregar_catalogo_ica_55_87_2026()
 
-    assert catalogo.schema_version == 2
+    assert catalogo.schema_version == 3
     assert len(catalogo.missoes) > 100
 
 
@@ -38,7 +38,7 @@ def test_converte_missao_catalogo_para_planejamento() -> None:
 
     missao = missao_planejamento_from_catalogo(item)
 
-    assert missao.descricao == "AVOP F-39E - Fase 1 (Verificacao Tecnica)"
+    assert missao.descricao == "AVOP F-39E – Fase 1 (Verificação Técnica) (2026)"
     assert missao.om_destino == "BAAN"
     assert missao.cidade == "Anapolis"
     assert missao.uf == "GO"
