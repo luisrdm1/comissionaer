@@ -2,15 +2,21 @@
 
 from __future__ import annotations
 
+import contextlib
+from collections.abc import Iterator
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
+from unicodedata import normalize as _unicode_normalize
 
 import questionary
+from prompt_toolkit.completion import CompleteEvent, Completer, Completion
+from prompt_toolkit.document import Document as PromptDocument
+from rich.console import Console
+from rich.table import Table
 
 from comissionaer.catalogo_ica import (
     MissaoCatalogoICA,
-    buscar_missoes_catalogo,
     carregar_catalogo_ica_55_87_2026,
     missao_planejamento_from_catalogo,
 )
@@ -28,29 +34,36 @@ from comissionaer.models import (
     proximo_posto,
 )
 
+console = Console()
+
+
+class _Cancelado(Exception):
+    """Usuário pressionou ESC — sobe um nível em vez de sair do programa."""
+
+
 # ---------------------------------------------------------------------------
-# Helpers tipados sobre questionary (ask() retorna Any)
+# Helpers tipados sobre questionary
 # ---------------------------------------------------------------------------
 
 
 def _ask_select(message: str, choices: list[str]) -> str:
     result: Any = questionary.select(message, choices=choices).ask()
     if result is None:
-        raise SystemExit(0)
+        raise _Cancelado
     return str(result)
 
 
 def _ask_text(message: str, default: str = "") -> str:
     result: Any = questionary.text(message, default=default).ask()
     if result is None:
-        raise SystemExit(0)
+        raise _Cancelado
     return str(result).strip()
 
 
 def _ask_confirm(message: str, default: bool = True) -> bool:
     result: Any = questionary.confirm(message, default=default).ask()
     if result is None:
-        raise SystemExit(0)
+        raise _Cancelado
     return bool(result)
 
 
@@ -63,36 +76,10 @@ def _ask_date(message: str, default: date | None = None) -> date:
         try:
             return datetime.strptime(raw, "%d/%m/%Y").date()
         except ValueError:
-            questionary.print("  Data inválida. Use o formato DD/MM/AAAA.", style="bold fg:red")
-
-
-def _ask_int(message: str, default: int = 1) -> int:
-    while True:
-        raw = _ask_text(message, default=str(default))
-        try:
-            value = int(raw)
-            if value < 1:
-                raise ValueError
-            return value
-        except ValueError:
-            questionary.print("  Informe um número inteiro positivo.", style="bold fg:red")
-
-
-def _ask_year(message: str) -> int | None:
-    while True:
-        raw = _ask_text(message)
-        if not raw:
-            return None
-        try:
-            return int(raw)
-        except ValueError:
-            questionary.print(
-                "  Informe um ano com quatro dígitos ou deixe vazio.", style="bold fg:red"
-            )
+            console.print("  Data inválida. Use o formato DD/MM/AAAA.", style="bold red")
 
 
 def _ask_cotas_voo(message: str, default: int = 0) -> Decimal:
-    """Pede número de cotas de voo (0–10) e retorna o percentual decimal (0 a 0.20)."""
     while True:
         raw = _ask_text(
             f"{message} (0 a 10 cotas, cada cota = 2%):",
@@ -104,30 +91,149 @@ def _ask_cotas_voo(message: str, default: int = 0) -> Decimal:
                 raise ValueError
             return Decimal(value * 2) / 100
         except ValueError:
-            questionary.print(
-                "  Valor inválido. Informe um inteiro de 0 a 10.", style="bold fg:red"
+            console.print("  Valor inválido. Informe um inteiro de 0 a 10.", style="bold red")
+
+
+def _pct_to_cotas(pct: Decimal) -> int:
+    return int(pct * 50)
+
+
+# ---------------------------------------------------------------------------
+# Tabelas de revisão (Rich)
+# ---------------------------------------------------------------------------
+
+_CONFIRMAR = "✓ Confirmar"
+_SIM = "Sim"
+_NAO = "Não"
+
+
+def _tabela_militar(m: Militar) -> None:
+    t = Table(title="Dados do Militar", show_header=False, box=None, padding=(0, 2))
+    t.add_column("Campo", style="bold cyan")
+    t.add_column("Valor")
+    t.add_row("Posto", m.posto.value)
+    t.add_row("Nome", m.nome)
+    t.add_row("Habilitação", m.habilitacao.value)
+    t.add_row("Dependentes", _SIM if m.dependentes == Dependentes.SIM else _NAO)
+    t.add_row("Comp. Orgânica (abertura)", f"{_pct_to_cotas(m.pct_compensacao_organica)} cotas")
+    tem_enc = (
+        m.posto_encerramento
+        or m.habilitacao_encerramento
+        or m.pct_compensacao_organica_encerramento is not None
+    )
+    if tem_enc:
+        t.add_row("— Encerramento —", "")
+        if m.posto_encerramento:
+            t.add_row("  Posto no encerramento", m.posto_encerramento.value)
+        if m.habilitacao_encerramento:
+            t.add_row("  Habilitação no encerramento", m.habilitacao_encerramento.value)
+        if m.pct_compensacao_organica_encerramento is not None:
+            t.add_row(
+                "  Comp. Orgânica (encerramento)",
+                f"{_pct_to_cotas(m.pct_compensacao_organica_encerramento)} cotas",
             )
+    else:
+        t.add_row("Encerramento", "Igual à abertura")
+    console.print()
+    console.print(t)
+
+
+def _tabela_missao(m: Missao, titulo: str = "Missão") -> None:
+    dias = (m.data_termino - m.data_inicio).days + 1
+    t = Table(title=titulo, show_header=False, box=None, padding=(0, 2))
+    t.add_column("Campo", style="bold cyan")
+    t.add_column("Valor")
+    t.add_row("Descrição", m.descricao)
+    t.add_row("OM de destino", m.om_destino)
+    t.add_row("Município/UF", f"{m.cidade}/{m.uf}")
+    t.add_row("Categoria da diária", m.categoria_diaria.value)
+    t.add_row("Início", m.data_inicio.strftime("%d/%m/%Y"))
+    t.add_row("Término", m.data_termino.strftime("%d/%m/%Y"))
+    t.add_row("Dias", str(dias))
+    console.print()
+    console.print(t)
+
+
+def _tabela_lista_missoes(missoes: list[Missao]) -> None:
+    t = Table(title=f"Missões ({len(missoes)})", show_header=True, padding=(0, 1))
+    t.add_column("#", style="bold", justify="right")
+    t.add_column("Descrição")
+    t.add_column("OM")
+    t.add_column("Local")
+    t.add_column("Início")
+    t.add_column("Término")
+    t.add_column("Dias", justify="right")
+    for i, m in enumerate(missoes, 1):
+        dias = str((m.data_termino - m.data_inicio).days + 1)
+        t.add_row(
+            str(i),
+            m.descricao,
+            m.om_destino,
+            f"{m.cidade}/{m.uf}",
+            m.data_inicio.strftime("%d/%m/%Y"),
+            m.data_termino.strftime("%d/%m/%Y"),
+            dias,
+        )
+    console.print()
+    console.print(t)
 
 
 # ---------------------------------------------------------------------------
-# Seções do fluxo
+# Coleta e revisão do militar
 # ---------------------------------------------------------------------------
+
+_CAMPO_POSTO = "Posto"
+_CAMPO_NOME = "Nome"
+_CAMPO_HABILITACAO = "Habilitação"
+_CAMPO_DEPENDENTES = "Dependentes"
+_CAMPO_COMP_ORG = "Comp. Orgânica (abertura)"
+_CAMPO_ENCERRAMENTO = "Situação no encerramento"
+
+
+_ORDEM_HABILITACAO = list(Habilitacao)
+
+
+def _habilitacoes_superiores(atual: Habilitacao) -> list[Habilitacao]:
+    idx = _ORDEM_HABILITACAO.index(atual)
+    return _ORDEM_HABILITACAO[idx + 1 :]
+
+
+def _coletar_encerramento(
+    posto: Posto, habilitacao: Habilitacao
+) -> tuple[Posto | None, Habilitacao | None, Decimal | None]:
+    posto_enc: Posto | None = None
+    hab_enc: Habilitacao | None = None
+    pct_comp_enc: Decimal | None = None
+    console.print("  — Situação no ENCERRAMENTO —", style="bold yellow")
+    prox = proximo_posto(posto)
+    if prox is None:
+        console.print("  Posto atual não possui promoção superior no cadastro.")
+    elif _ask_confirm(f"  Mudará de posto no encerramento? (se sim: {prox.value})", default=False):
+        posto_enc = prox
+    superiores = _habilitacoes_superiores(habilitacao)
+    if superiores and _ask_confirm("  Concluirá nova habilitação no encerramento?", default=False):
+        hab_enc_label = _ask_select(
+            "  Habilitação no encerramento:", choices=[h.value for h in superiores]
+        )
+        hab_enc = next(h for h in superiores if h.value == hab_enc_label)
+    if _ask_confirm("  O adicional de compensação orgânica mudará no encerramento?", default=False):
+        pct_comp_enc = _ask_cotas_voo("  Cotas de voo no encerramento")
+    return posto_enc, hab_enc, pct_comp_enc
 
 
 def _coletar_militar() -> Militar:
-    questionary.print("\n=== DADOS DO MILITAR ===", style="bold")
+    console.print("\n[bold]=== DADOS DO MILITAR ===[/bold]")
 
     posto_label = _ask_select("Posto:", choices=[p.value for p in Posto])
     posto = next(p for p in Posto if p.value == posto_label)
 
     nome = _ask_text("Nome completo (sem abreviações):")
     while not nome:
-        questionary.print("  Nome não pode ser vazio.", style="bold fg:red")
+        console.print("  Nome não pode ser vazio.", style="bold red")
         nome = _ask_text("Nome completo (sem abreviações):")
 
     hab_label = _ask_select(
-        "Habilitação (curso mais alto concluído):",
-        choices=[h.value for h in Habilitacao],
+        "Habilitação (curso mais alto concluído):", choices=[h.value for h in Habilitacao]
     )
     habilitacao = next(h for h in Habilitacao if h.value == hab_label)
 
@@ -137,34 +243,11 @@ def _coletar_militar() -> Militar:
     posto_enc: Posto | None = None
     hab_enc: Habilitacao | None = None
     pct_comp_enc: Decimal | None = None
+    pergunta_enc = "\nHaverá promoção ou conclusão de nova habilitação até o encerramento?"
+    if _ask_confirm(pergunta_enc, default=False):
+        posto_enc, hab_enc, pct_comp_enc = _coletar_encerramento(posto, habilitacao)
 
-    if _ask_confirm(
-        "\nHaverá promoção ou conclusão de nova habilitação até o encerramento?",
-        default=False,
-    ):
-        questionary.print("  — Situação no ENCERRAMENTO —", style="bold fg:yellow")
-
-        prox = proximo_posto(posto)
-        if prox is None:
-            questionary.print("  Posto atual não possui promoção superior no cadastro.")
-        elif _ask_confirm(
-            f"  Mudará de posto no encerramento? (se sim: {prox.value})", default=False
-        ):
-            posto_enc = prox
-
-        if _ask_confirm("  Concluirá nova habilitação no encerramento?", default=False):
-            hab_enc_label = _ask_select(
-                "  Habilitação no encerramento:",
-                choices=[h.value for h in Habilitacao],
-            )
-            hab_enc = next(h for h in Habilitacao if h.value == hab_enc_label)
-
-        if _ask_confirm(
-            "  O adicional de compensação orgânica mudará no encerramento?", default=False
-        ):
-            pct_comp_enc = _ask_cotas_voo("  Cotas de voo no encerramento")
-
-    return Militar(
+    militar = Militar(
         nome=nome,
         posto=posto,
         habilitacao=habilitacao,
@@ -175,90 +258,224 @@ def _coletar_militar() -> Militar:
         pct_compensacao_organica_encerramento=pct_comp_enc,
     )
 
+    # revisão com edição campo a campo; ESC no menu do campo = cancelar edição
+    while True:
+        _tabela_militar(militar)
+        try:
+            acao = _ask_select(
+                "Dados do militar:",
+                choices=[
+                    _CONFIRMAR,
+                    _CAMPO_POSTO,
+                    _CAMPO_NOME,
+                    _CAMPO_HABILITACAO,
+                    _CAMPO_DEPENDENTES,
+                    _CAMPO_COMP_ORG,
+                    _CAMPO_ENCERRAMENTO,
+                ],
+            )
+        except _Cancelado:
+            return militar  # ESC no menu de revisão = confirmar como está
 
-def _aplicar_periodo_comissionamento(militar: Militar, missoes: list[Missao]) -> None:
-    questionary.print("\n=== ENQUADRAMENTO DO COMISSIONAMENTO ===", style="bold")
-    inicio, termino = periodo_missoes(missoes)
-    faixa = classificar_ajuda_custo(inicio, termino)
-    dias_corridos = dias_periodo(inicio, termino)
-    militar.data_inicio_comissionamento = inicio
-    militar.data_termino_comissionamento = termino
+        if acao == _CONFIRMAR:
+            return militar
 
-    questionary.print(
-        "  Período derivado das missões: "
-        f"{inicio.strftime('%d/%m/%Y')} a {termino.strftime('%d/%m/%Y')} "
-        f"({dias_corridos} dias corridos).",
-        style="bold fg:green",
-    )
-    questionary.print(
-        f"  Enquadramento de ajuda de custo: {faixa.value}.",
-        style="bold fg:green",
-    )
+        try:
+            if acao == _CAMPO_POSTO:
+                label = _ask_select("Posto:", choices=[p.value for p in Posto])
+                militar.posto = next(p for p in Posto if p.value == label)
+            elif acao == _CAMPO_NOME:
+                novo = _ask_text("Nome completo:", default=militar.nome)
+                while not novo:
+                    console.print("  Nome não pode ser vazio.", style="bold red")
+                    novo = _ask_text("Nome completo:", default=militar.nome)
+                militar.nome = novo
+            elif acao == _CAMPO_HABILITACAO:
+                label = _ask_select("Habilitação:", choices=[h.value for h in Habilitacao])
+                militar.habilitacao = next(h for h in Habilitacao if h.value == label)
+            elif acao == _CAMPO_DEPENDENTES:
+                militar.dependentes = (
+                    Dependentes.SIM if _ask_confirm("Possui dependentes?") else Dependentes.NAO
+                )
+            elif acao == _CAMPO_COMP_ORG:
+                militar.pct_compensacao_organica = _ask_cotas_voo(
+                    "Cotas de voo (abertura)",
+                    default=_pct_to_cotas(militar.pct_compensacao_organica),
+                )
+            elif acao == _CAMPO_ENCERRAMENTO:
+                if _ask_confirm("Haverá mudança no encerramento?", default=False):
+                    pe, he, pc = _coletar_encerramento(militar.posto, militar.habilitacao)
+                    militar.posto_encerramento = pe
+                    militar.habilitacao_encerramento = he
+                    militar.pct_compensacao_organica_encerramento = pc
+                else:
+                    militar.posto_encerramento = None
+                    militar.habilitacao_encerramento = None
+                    militar.pct_compensacao_organica_encerramento = None
+        except _Cancelado:
+            continue  # ESC durante edição = descartar, volta ao menu
 
 
-def _formatar_missao_catalogo(missao: MissaoCatalogoICA, indice: int) -> str:
-    inicio = missao.data_inicio_planejamento.strftime("%d/%m/%Y")
-    termino = missao.data_termino_planejamento.strftime("%d/%m/%Y")
-    local = f"{missao.cidade}/{missao.uf}" if missao.cidade and missao.uf else "local nao informado"
-    om = ", ".join(missao.om_destino) if missao.om_destino else "OM nao informada"
-    return f"{indice}. {inicio} a {termino} | {missao.descricao} | {local} | {om}"
+# ---------------------------------------------------------------------------
+# Catálogo ICA — busca FZF
+# ---------------------------------------------------------------------------
+
+_FZF_MAX = 6
+_FZF_STYLE = questionary.Style(
+    [
+        ("answer", "fg:#2ecc71 bold"),
+        ("completion-menu.completion", "bg:#1a2233 fg:#d8d8d8"),
+        ("completion-menu.completion.current", "bg:#0055aa fg:#ffffff bold"),
+        ("completion-menu.border", "fg:#444466"),
+    ]
+)
+
+
+def _norm(s: str) -> str:
+    return _unicode_normalize("NFKD", s).encode("ascii", "ignore").decode().casefold()
+
+
+class _MissaoCompleter(Completer):
+    def __init__(self, items: list[str]) -> None:
+        self._items = items
+        self._normed = [_norm(i) for i in items]
+
+    def get_completions(
+        self, document: PromptDocument, complete_event: CompleteEvent
+    ) -> Iterator[Completion]:
+        query = _norm(document.text)
+        count = 0
+        for item, normed in zip(self._items, self._normed, strict=True):
+            if query in normed:
+                if count >= _FZF_MAX:
+                    break
+                yield Completion(item, start_position=-len(document.text))
+                count += 1
+
+
+def _linha_missao_catalogo(m: MissaoCatalogoICA) -> str:
+    inicio = m.data_inicio_planejamento.strftime("%d/%m")
+    termino = m.data_termino_planejamento.strftime("%d/%m/%Y")
+    local = f"{m.cidade}/{m.uf}" if m.cidade and m.uf else "?"
+    om = m.om_destino[0] if m.om_destino else "?"
+    return f"{m.descricao}  [{inicio}–{termino}  {local}  {om}]"
 
 
 def _selecionar_missao_catalogo() -> MissaoCatalogoICA:
+    """ESC propaga _Cancelado para o chamador."""
     catalogo = carregar_catalogo_ica_55_87_2026()
+
+    missoes_map: dict[str, MissaoCatalogoICA] = {}
+    for m in catalogo.missoes:
+        missoes_map[_linha_missao_catalogo(m)] = m
+
+    completer = _MissaoCompleter(list(missoes_map.keys()))
+    console.print(
+        "\n  Catálogo ICA 55-87/2026 — digite para filtrar (nome, OM, cidade, ICAO):",
+        style="bold cyan",
+    )
+
     while True:
-        questionary.print("\n  — Busca no catálogo ICA 55-87/2026 —", style="bold fg:cyan")
-        texto = _ask_text("  Texto livre:")
-        om = _ask_text("  OM:").upper()
-        cidade = _ask_text("  Cidade:")
-        uf = _ask_text("  UF:").upper()[:2]
-        icao = _ask_text("  ICAO:").upper()
-        ano = _ask_year("  Ano:")
+        result: Any = questionary.autocomplete(
+            "  Missão:",
+            choices=[],
+            completer=completer,
+            style=_FZF_STYLE,
+        ).ask()
+        if result is None:
+            raise _Cancelado
+        if result in missoes_map:
+            return missoes_map[result]
+        console.print("  Selecione uma das opções da lista.", style="bold red")
 
-        resultados = buscar_missoes_catalogo(
-            catalogo,
-            texto=texto,
-            om=om,
-            cidade=cidade,
-            uf=uf,
-            icao=icao,
-            ano=ano,
-        )
-        if not resultados:
-            questionary.print("  Nenhuma missão encontrada.", style="bold fg:red")
-            continue
 
-        limite = 30
-        if len(resultados) > limite:
-            questionary.print(
-                f"  {len(resultados)} missões encontradas; exibindo as primeiras {limite}.",
-                style="bold fg:yellow",
-            )
-        exibidas = resultados[:limite]
-        opcoes = [_formatar_missao_catalogo(missao, i + 1) for i, missao in enumerate(exibidas)]
-        opcoes.append("Refinar busca")
-        selecionada = _ask_select("  Selecione a missão:", choices=opcoes)
-        if selecionada == "Refinar busca":
-            continue
-        return exibidas[opcoes.index(selecionada)]
+# ---------------------------------------------------------------------------
+# Coleta e revisão de missão
+# ---------------------------------------------------------------------------
+
+_CAMPO_DESCRICAO = "Descrição"
+_CAMPO_OM = "OM de destino"
+_CAMPO_CIDADE = "Município"
+_CAMPO_UF = "UF"
+_CAMPO_CATEGORIA = "Categoria da diária"
+_CAMPO_INICIO = "Data de início"
+_CAMPO_TERMINO = "Data de término"
+
+_CAMPOS_MISSAO = [
+    _CONFIRMAR,
+    _CAMPO_DESCRICAO,
+    _CAMPO_OM,
+    _CAMPO_CIDADE,
+    _CAMPO_UF,
+    _CAMPO_CATEGORIA,
+    _CAMPO_INICIO,
+    _CAMPO_TERMINO,
+]
+
+
+def _revisar_missao(missao: Missao) -> Missao:
+    while True:
+        _tabela_missao(missao)
+        try:
+            acao = _ask_select("Dados da missão:", choices=_CAMPOS_MISSAO)
+        except _Cancelado:
+            return missao  # ESC no menu de revisão = confirmar como está
+
+        if acao == _CONFIRMAR:
+            return missao
+
+        try:
+            if acao == _CAMPO_DESCRICAO:
+                missao.descricao = _ask_text("  Descrição:", default=missao.descricao)
+            elif acao == _CAMPO_OM:
+                missao.om_destino = _ask_text("  OM de destino:", default=missao.om_destino).upper()
+            elif acao == _CAMPO_CIDADE:
+                missao.cidade = _ask_text("  Município:", default=missao.cidade)
+            elif acao == _CAMPO_UF:
+                missao.uf = _ask_text("  UF:", default=missao.uf).upper()[:2]
+            elif acao == _CAMPO_CATEGORIA:
+                label = _ask_select(
+                    "  Categoria da diária:", choices=[c.value for c in CategoriaDiaria]
+                )
+                missao.categoria_diaria = next(c for c in CategoriaDiaria if c.value == label)
+            elif acao == _CAMPO_INICIO:
+                missao.data_inicio = _ask_date("  Data de início", default=missao.data_inicio)
+                if missao.data_termino < missao.data_inicio:
+                    console.print("  Término ajustado para igual ao início.", style="bold yellow")
+                    missao.data_termino = missao.data_inicio
+            elif acao == _CAMPO_TERMINO:
+                while True:
+                    missao.data_termino = _ask_date(
+                        "  Data de término", default=missao.data_termino
+                    )
+                    if missao.data_termino >= missao.data_inicio:
+                        break
+                    console.print("  Data de término anterior ao início.", style="bold red")
+        except _Cancelado:
+            continue  # ESC durante edição = descartar, volta ao menu
 
 
 def _coletar_missao_catalogo() -> Missao:
+    """_Cancelado propaga caso ESC seja pressionado no campo de busca."""
     item = _selecionar_missao_catalogo()
-    questionary.print(f"\n  Selecionada: {item.descricao}", style="bold fg:green")
+    console.print(f"\n  Selecionada: {item.descricao}", style="bold green")
 
     om_destino = item.om_destino[0] if item.om_destino else ""
     if len(item.om_destino) > 1:
-        escolha_om = _ask_select(
-            "  OM de destino:", choices=[*item.om_destino, "Informar manualmente"]
-        )
-        om_destino = (
-            _ask_text("  OM de destino:").upper()
-            if escolha_om == "Informar manualmente"
-            else escolha_om
-        )
+        try:
+            escolha_om = _ask_select(
+                "  OM de destino:", choices=[*item.om_destino, "Informar manualmente"]
+            )
+            om_destino = (
+                _ask_text("  OM de destino:").upper()
+                if escolha_om == "Informar manualmente"
+                else escolha_om
+            )
+        except _Cancelado:
+            pass  # usa o primeiro OM do catálogo
     elif not om_destino:
-        om_destino = _ask_text("  OM de destino:").upper()
+        with contextlib.suppress(_Cancelado):
+            om_destino = _ask_text("  OM de destino:").upper()
 
     categoria = item.categoria_diaria
     if categoria is None:
@@ -267,29 +484,15 @@ def _coletar_missao_catalogo() -> Missao:
         )
         categoria = next(c for c in CategoriaDiaria if c.value == cat_label)
 
-    inicio = item.data_inicio_planejamento
-    termino = item.data_termino_planejamento
-    if _ask_confirm("  Ajustar datas/OM/categoria do planejamento?", default=False):
-        om_destino = _ask_text("  OM de destino:", default=om_destino).upper()
-        cat_label = _ask_select(
-            "  Categoria da diária:", choices=[c.value for c in CategoriaDiaria]
-        )
-        categoria = next(c for c in CategoriaDiaria if c.value == cat_label)
-        inicio = _ask_date("  Data de início", default=inicio)
-        termino = _ask_date("  Data de término", default=termino)
-        while termino < inicio:
-            questionary.print("  Data de término anterior ao início.", style="bold fg:red")
-            termino = _ask_date("  Data de término", default=termino)
-
-    num_desloc = _ask_int("  Número de deslocamentos:", default=1)
-    return missao_planejamento_from_catalogo(
+    missao = missao_planejamento_from_catalogo(
         item,
         om_destino=om_destino,
         categoria_diaria=categoria,
-        data_inicio=inicio,
-        data_termino=termino,
-        num_deslocamentos=num_desloc,
+        data_inicio=item.data_inicio_planejamento,
+        data_termino=item.data_termino_planejamento,
+        num_deslocamentos=1,
     )
+    return _revisar_missao(missao)
 
 
 def _coletar_missao_manual() -> Missao:
@@ -298,21 +501,16 @@ def _coletar_missao_manual() -> Missao:
     cidade = _ask_text("  Município de destino:")
     uf = _ask_text("  UF (sigla, ex: RS):").upper()[:2]
 
-    cat_label = _ask_select(
-        "  Categoria da diária:",
-        choices=[c.value for c in CategoriaDiaria],
-    )
+    cat_label = _ask_select("  Categoria da diária:", choices=[c.value for c in CategoriaDiaria])
     categoria = next(c for c in CategoriaDiaria if c.value == cat_label)
 
     inicio = _ask_date("  Data de início")
     termino = _ask_date("  Data de término")
     while termino < inicio:
-        questionary.print("  Data de término anterior ao início.", style="bold fg:red")
+        console.print("  Data de término anterior ao início.", style="bold red")
         termino = _ask_date("  Data de término")
 
-    num_desloc = _ask_int("  Número de deslocamentos:", default=1)
-
-    return Missao(
+    missao = Missao(
         descricao=descricao,
         om_destino=om_destino,
         cidade=cidade,
@@ -320,37 +518,98 @@ def _coletar_missao_manual() -> Missao:
         categoria_diaria=categoria,
         data_inicio=inicio,
         data_termino=termino,
-        num_deslocamentos=num_desloc,
+        num_deslocamentos=1,
     )
+    return _revisar_missao(missao)
+
+
+# ---------------------------------------------------------------------------
+# Gerenciamento da lista de missões
+# ---------------------------------------------------------------------------
+
+_ACAO_ADICIONAR = "Adicionar missão"
+_ACAO_CONFIRMAR_LISTA = "✓ Confirmar lista de missões"
+
+
+def _coletar_nova_missao() -> Missao:
+    origem = _ask_select(
+        "  Origem dos dados da missão:",
+        choices=["Catálogo ICA 55-87/2026", "Informar manualmente"],
+    )
+    return _coletar_missao_catalogo() if origem.startswith("Catálogo") else _coletar_missao_manual()
 
 
 def _coletar_missoes() -> list[Missao]:
-    questionary.print("\n=== MISSÕES ===", style="bold")
+    console.print("\n[bold]=== MISSÕES ===[/bold]")
     missoes: list[Missao] = []
 
+    while not missoes:
+        console.print("\n  — Missão 1 —", style="bold cyan")
+        try:
+            missoes.append(_coletar_nova_missao())
+        except _Cancelado:
+            console.print("  Informe pelo menos uma missão.", style="bold red")
+
     while True:
-        if missoes and not _ask_confirm("Adicionar mais uma missão?"):
-            break
-        if not missoes and not _ask_confirm("Adicionar missão?"):
-            questionary.print(
-                "  Informe pelo menos uma missão para derivar o período do comissionamento.",
-                style="bold fg:red",
-            )
+        _tabela_lista_missoes(missoes)
+
+        opcoes: list[str] = [_ACAO_CONFIRMAR_LISTA, _ACAO_ADICIONAR]
+        opcoes += [f"Editar missão {i + 1} — {m.descricao[:50]}" for i, m in enumerate(missoes)]
+        opcoes += [f"Remover missão {i + 1} — {m.descricao[:50]}" for i, m in enumerate(missoes)]
+
+        try:
+            acao = _ask_select("O que deseja fazer?", choices=opcoes)
+        except _Cancelado:
+            return missoes  # ESC no menu da lista = confirmar como está
+
+        if acao == _ACAO_CONFIRMAR_LISTA:
+            return missoes
+
+        if acao == _ACAO_ADICIONAR:
+            console.print(f"\n  — Missão {len(missoes) + 1} —", style="bold cyan")
+            try:
+                missoes.append(_coletar_nova_missao())
+            except _Cancelado:
+                console.print("  Adição cancelada.", style="yellow")
             continue
 
-        questionary.print(f"\n  — Missão {len(missoes) + 1} —", style="bold fg:cyan")
-        origem = _ask_select(
-            "  Origem dos dados da missão:",
-            choices=["Catálogo ICA 55-87/2026", "Informar manualmente"],
-        )
-        missao = (
-            _coletar_missao_catalogo()
-            if origem.startswith("Catálogo")
-            else _coletar_missao_manual()
-        )
-        missoes.append(missao)
+        if acao.startswith("Editar missão "):
+            idx = int(acao.split()[2]) - 1
+            missoes[idx] = _revisar_missao(missoes[idx])
+            continue
 
-    return missoes
+        if acao.startswith("Remover missão "):
+            idx = int(acao.split()[2]) - 1
+            removida = missoes.pop(idx)
+            console.print(f"  Missão '{removida.descricao}' removida.", style="bold yellow")
+            if not missoes:
+                console.print("  Informe pelo menos uma missão.", style="bold red")
+                while not missoes:
+                    try:
+                        missoes.append(_coletar_nova_missao())
+                    except _Cancelado:
+                        console.print("  Informe pelo menos uma missão.", style="bold red")
+
+
+# ---------------------------------------------------------------------------
+# Período e arquivo
+# ---------------------------------------------------------------------------
+
+
+def _aplicar_periodo_comissionamento(militar: Militar, missoes: list[Missao]) -> None:
+    console.print("\n[bold]=== ENQUADRAMENTO DO COMISSIONAMENTO ===[/bold]")
+    inicio, termino = periodo_missoes(missoes)
+    faixa = classificar_ajuda_custo(inicio, termino)
+    dias_corridos = dias_periodo(inicio, termino)
+    militar.data_inicio_comissionamento = inicio
+    militar.data_termino_comissionamento = termino
+    console.print(
+        f"  Período derivado das missões: "
+        f"{inicio.strftime('%d/%m/%Y')} a {termino.strftime('%d/%m/%Y')} "
+        f"({dias_corridos} dias corridos).",
+        style="bold green",
+    )
+    console.print(f"  Enquadramento de ajuda de custo: {faixa.value}.", style="bold green")
 
 
 def _pedir_nome_arquivo(nome_militar: str, posto: Posto) -> str:
@@ -362,18 +621,25 @@ def _pedir_nome_arquivo(nome_militar: str, posto: Posto) -> str:
     return nome
 
 
+# ---------------------------------------------------------------------------
+# Ponto de entrada
+# ---------------------------------------------------------------------------
+
+
 def coletar_dados() -> tuple[Militar, list[Missao], str]:
     """Ponto de entrada do fluxo interativo. Retorna (militar, missoes, caminho_pdf)."""
-    militar = _coletar_militar()
-    missoes = _coletar_missoes()
-    _aplicar_periodo_comissionamento(militar, missoes)
-
-    questionary.print(
-        f"\nTotal de dias em missões planejadas: {dias_missoes(missoes)}.",
-        style="bold fg:green",
-    )
-    caminho = _pedir_nome_arquivo(militar.nome, militar.posto)
-    return militar, missoes, caminho
+    try:
+        militar = _coletar_militar()
+        missoes = _coletar_missoes()
+        _aplicar_periodo_comissionamento(militar, missoes)
+        console.print(
+            f"\nTotal de dias em missões planejadas: {dias_missoes(missoes)}.",
+            style="bold green",
+        )
+        caminho = _pedir_nome_arquivo(militar.nome, militar.posto)
+        return militar, missoes, caminho
+    except _Cancelado:
+        raise SystemExit(0) from None
 
 
 def perguntar_salvar_yaml(caminho_pdf: str) -> str | None:

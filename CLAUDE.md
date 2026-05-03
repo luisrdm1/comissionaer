@@ -11,6 +11,19 @@ git push origin master
 
 `forgejo` = servidor local (forgejo.lan). `origin` = GitHub (luisrdm1/comissionaer).
 
+## Comandos
+
+Sempre usar `uv run` para executar ferramentas do projeto:
+
+```bash
+uv run ruff check comissionaer/ --fix && uv run ruff format comissionaer/
+uv run pyright comissionaer/
+uv run pytest
+uv run comissionaer
+```
+
+Nunca chamar `.venv\Scripts\...` diretamente.
+
 ## Stack
 
 - Python 3.14, uv, pyright strict, ruff
