@@ -109,11 +109,12 @@ def calcular(militar: Militar, missoes: list[Missao]) -> Calculo:
     base = calcular_base(militar)
     base_enc = calcular_base_encerramento(militar)
     fator_ida, fator_volta = fatores_ajuda_custo(faixa, militar.dependentes)
+    missoes_ordenadas = sorted(missoes, key=lambda m: m.data_inicio)
     return Calculo(
         militar=militar,
         base=base,
         base_encerramento=base_enc,
         fator_ida=fator_ida,
         fator_volta=fator_volta,
-        missoes=[calcular_missao(m, militar.posto) for m in missoes],
+        missoes=[calcular_missao(m, militar.posto) for m in missoes_ordenadas],
     )

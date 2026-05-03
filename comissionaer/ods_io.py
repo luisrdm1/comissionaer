@@ -52,7 +52,7 @@ def _sv(table: Table, col: int, row: int, value: str | int | float | date) -> No
 def _build_table(nome: str, calculo: Calculo) -> Table:
     table = Table(nome)
     m = calculo.militar
-    missoes_sorted = sorted(calculo.missoes, key=lambda r: r.missao.data_inicio)
+    missoes_sorted = calculo.missoes
     dep = "SIM" if m.dependentes.value else "NÃO"
     fator = calculo.fator_ida + calculo.fator_volta
     fator_val: int | float = int(fator) if fator == int(fator) else float(fator)

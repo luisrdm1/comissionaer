@@ -213,3 +213,20 @@ def test_totais_de_missoes_somam_diarias_e_deslocamentos() -> None:
     assert calculo.total_diarias == Decimal("34055.000")
     assert calculo.total_deslocamentos == Decimal("570.00")
     assert calculo.total_missoes == Decimal("34625.000")
+
+
+# ---------------------------------------------------------------------------
+# Missões são ordenadas por data_inicio
+# ---------------------------------------------------------------------------
+
+
+def test_calcular_ordena_missoes_por_data_inicio() -> None:
+    """calcular() retorna missões ordenadas por data_inicio."""
+    missoes = [
+        _missao(date(2027, 8, 13), date(2027, 8, 29)),
+        _missao(date(2026, 5, 10), date(2026, 5, 30)),
+        _missao(date(2027, 3, 1), date(2027, 3, 17)),
+    ]
+    calculo = calcular(_militar(), missoes)
+    datas = [rm.missao.data_inicio for rm in calculo.missoes]
+    assert datas == sorted(datas)

@@ -654,10 +654,10 @@ def _coletar_missoes(militar: Militar) -> list[Missao]:
                 choices=[_ACAO_CONFIRMAR_LISTA, _ACAO_ADICIONAR, _ACAO_EDITAR, _ACAO_REMOVER],
             )
         except _Cancelado:
-            return missoes  # ESC no menu da lista = confirmar como está
+            return sorted(missoes, key=lambda m: m.data_inicio)
 
         if acao == _ACAO_CONFIRMAR_LISTA:
-            return missoes
+            return sorted(missoes, key=lambda m: m.data_inicio)
 
         if acao == _ACAO_ADICIONAR:
             console.print(f"\n  — Missão {len(missoes) + 1} —", style="bold cyan")

@@ -21,12 +21,13 @@ git push origin master
 Sempre usar `uv run` para executar ferramentas do projeto:
 
 ```bash
-uv run ruff check comissionaer/ --fix && uv run ruff format comissionaer/
-uv run pyright comissionaer/
+uv run ruff check --fix && uv run ruff format
+uv run pyright
 uv run pytest
 uv run comissionaer
 ```
 
+Fazer cheques amplos, não realizar cherry picking!
 Nunca chamar `.venv\Scripts\...` diretamente.
 
 ## Stack
