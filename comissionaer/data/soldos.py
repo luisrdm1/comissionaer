@@ -21,5 +21,6 @@ SOLDOS: dict[Posto, Decimal] = {
     Posto.SEGUNDO_SARGENTO: Decimal("5199.00"),
     Posto.TERCEIRO_SARGENTO: Decimal("4169.00"),
     Posto.CABO: Decimal("2863.00"),
-    Posto.SOLDADO: Decimal("1924.00"),
+    Posto.SOLDADO_1_CLASSE: Decimal("1924.00"),
+    Posto.SOLDADO_2_CLASSE: Decimal("1924.00"),
 }

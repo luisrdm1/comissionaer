@@ -20,41 +20,36 @@ from comissionaer.models import (
 # ---------------------------------------------------------------------------
 
 
-def test_ate_15_dias_nao_gera_ajuda_custo() -> None:
-    assert classificar_ajuda_custo_por_dias(1) == FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
-    assert classificar_ajuda_custo_por_dias(15) == FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
+def test_ate_15_dias_rejeitado() -> None:
+    with pytest.raises(ValueError, match="igual ou inferior a 15"):
+        classificar_ajuda_custo_por_dias(1)
+    with pytest.raises(ValueError, match="igual ou inferior a 15"):
+        classificar_ajuda_custo_por_dias(15)
 
 
 def test_fronteira_15_16_dias() -> None:
-    assert classificar_ajuda_custo_por_dias(15) == FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
-    assert (
-        classificar_ajuda_custo_por_dias(16) == FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
-    )
+    with pytest.raises(ValueError):
+        classificar_ajuda_custo_por_dias(15)
+    assert classificar_ajuda_custo_por_dias(16) == FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES
 
 
 def test_90_dias_ainda_e_primeira_faixa() -> None:
-    assert (
-        classificar_ajuda_custo_por_dias(90) == FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
-    )
+    assert classificar_ajuda_custo_por_dias(90) == FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES
 
 
 def test_fronteira_90_91_dias() -> None:
-    assert (
-        classificar_ajuda_custo_por_dias(90) == FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
-    )
-    assert classificar_ajuda_custo_por_dias(91) == FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
+    assert classificar_ajuda_custo_por_dias(90) == FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES
+    assert classificar_ajuda_custo_por_dias(91) == FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES
 
 
 def test_acima_de_90_dias_segunda_faixa() -> None:
-    assert classificar_ajuda_custo_por_dias(91) == FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
-    assert classificar_ajuda_custo_por_dias(365) == FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
+    assert classificar_ajuda_custo_por_dias(91) == FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES
+    assert classificar_ajuda_custo_por_dias(365) == FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES
 
 
 def test_36_dias_e_primeira_faixa_nao_acima_de_3_meses() -> None:
     """Caso concreto reportado: maio+agosto = 36 dias de missão não é > 3 meses."""
-    assert (
-        classificar_ajuda_custo_por_dias(36) == FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
-    )
+    assert classificar_ajuda_custo_por_dias(36) == FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES
 
 
 # ---------------------------------------------------------------------------
@@ -62,23 +57,21 @@ def test_36_dias_e_primeira_faixa_nao_acima_de_3_meses() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_calendario_ate_15_dias() -> None:
-    faixa = classificar_ajuda_custo(date(2026, 1, 1), date(2026, 1, 15))
-
-    assert dias_periodo(date(2026, 1, 1), date(2026, 1, 15)) == 15
-    assert faixa == FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
+def test_calendario_ate_15_dias_rejeitado() -> None:
+    with pytest.raises(ValueError, match="igual ou inferior a 15 dias"):
+        classificar_ajuda_custo(date(2026, 1, 1), date(2026, 1, 15))
 
 
 def test_calendario_tres_meses_exatos_primeira_faixa() -> None:
     faixa = classificar_ajuda_custo(date(2026, 1, 1), date(2026, 3, 31))
 
-    assert faixa == FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
+    assert faixa == FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES
 
 
 def test_calendario_acima_tres_meses_segunda_faixa() -> None:
     faixa = classificar_ajuda_custo(date(2026, 1, 1), date(2026, 4, 1))
 
-    assert faixa == FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
+    assert faixa == FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES
 
 
 # ---------------------------------------------------------------------------

@@ -57,7 +57,8 @@ TIER_DIARIA: dict[Posto, TierDiaria] = {
     Posto.SEGUNDO_SARGENTO: TierDiaria.PRACA_GRADUADA,
     Posto.TERCEIRO_SARGENTO: TierDiaria.PRACA_GRADUADA,
     Posto.CABO: TierDiaria.PRACA,
-    Posto.SOLDADO: TierDiaria.PRACA,
+    Posto.SOLDADO_1_CLASSE: TierDiaria.PRACA,
+    Posto.SOLDADO_2_CLASSE: TierDiaria.PRACA,
 }
 
 
@@ -68,11 +69,12 @@ class CategoriaDiaria(Enum):
 
 
 class FaixaAjudaCusto(Enum):
-    SEM_DESLIGAMENTO_ATE_15_DIAS = "Comissão sem desligamento até 15 dias"
-    SEM_DESLIGAMENTO_15_DIAS_A_3_MESES = (
-        "Comissão sem desligamento superior a 15 dias e até 3 meses"
+    SUPERIOR_15_DIAS_ATE_3_MESES = (
+        "Comissão sem desligamento superior a 15 dias e igual ou inferior a 3 meses"
     )
-    SEM_DESLIGAMENTO_ACIMA_3_MESES = "Comissão sem desligamento superior a 3 meses"
+    SUPERIOR_3_MESES_ATE_12_MESES = (
+        "Comissão sem desligamento superior a 3 meses e igual ou inferior a 12 meses"
+    )
 
 
 class Dependentes(Enum):
@@ -81,7 +83,8 @@ class Dependentes(Enum):
 
 
 _ORDEM_PROMOCAO: tuple[Posto, ...] = (
-    Posto.SOLDADO,
+    Posto.SOLDADO_2_CLASSE,
+    Posto.SOLDADO_1_CLASSE,
     Posto.CABO,
     Posto.TERCEIRO_SARGENTO,
     Posto.SEGUNDO_SARGENTO,
@@ -154,19 +157,29 @@ def classificar_ajuda_custo(inicio: date, termino: date) -> FaixaAjudaCusto:
     if termino < inicio:
         raise ValueError("Data de término do comissionamento anterior ao início.")
     if dias_periodo(inicio, termino) <= 15:
-        return FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
+        raise ValueError(
+            "Comissionamento não aplicável: período total é igual ou inferior a 15 dias."
+        )
     if termino <= _limite_meses_inclusivo(inicio, 3):
-        return FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
-    return FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
+        return FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES
+    return FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES
 
 
 def classificar_ajuda_custo_por_dias(total_dias: int) -> FaixaAjudaCusto:
-    """Classifica pela soma dos dias de missão, não pelo span do calendário."""
+    """Classifica pela soma dos dias de missão, não pelo span do calendário.
+
+    Anexo V da Lei 13.954/2019: não há previsão de ajuda de custo para
+    comissão sem desligamento com ≤ 15 dias de missão.
+    """
     if total_dias <= 15:
-        return FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS
+        raise ValueError(
+            "Comissionamento não aplicável: total de dias fora de sede é "
+            "igual ou inferior a 15. O Anexo V da Lei 13.954/2019 não prevê "
+            "ajuda de custo nessa situação."
+        )
     if total_dias <= 90:
-        return FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES
-    return FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES
+        return FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES
+    return FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES
 
 
 def classificar_ajuda_custo_missoes(missoes: list[Missao]) -> FaixaAjudaCusto:

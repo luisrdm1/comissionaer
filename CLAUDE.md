@@ -1,5 +1,10 @@
 # ComissionAER — instruções para o agente
 
+## Regras gerais
+
+- Ao buscar informações na internet, lembre-se de carregar a skill gemini-research e faça a busca usando a CLI do Gemini.
+- Leia e governe o arquivo TODO.md a fim de garantir continuidade das ações.
+
 ## Git: push
 
 Sempre pushar para os dois remotes ao commitar:
@@ -37,7 +42,3 @@ Nunca chamar `.venv\Scripts\...` diretamente.
 - Duração LONGO exige > 90 dias totais de missões
 - Ajuda de custo: `fator_ida × base_abertura + fator_volta × base_encerramento`
 - Compensação orgânica: usar o valor **transitório** (20% se voando), não apenas cotas incorporadas — confirmado pela planilha IAOp
-
-## Cotas de voo
-
-Válidas de 0 a 10 (cada cota = 2%, máximo 20%). Perguntar como inteiro no CLI.

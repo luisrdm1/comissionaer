@@ -231,8 +231,20 @@ def _tabela_lista_missoes(missoes: list[Missao], militar: Militar | None = None)
 
     if militar is not None and resultados is not None:
         total_dias = dias_missoes(missoes)
+        try:
+            faixa = classificar_ajuda_custo_por_dias(total_dias)
+        except ValueError:
+            console.print(
+                Panel(
+                    "Comissionamento não aplicável: total de dias fora de sede "
+                    f"é [bold]{total_dias}[/bold] (≤ 15).",
+                    title="Resumo do comissionamento",
+                    border_style="red",
+                )
+            )
+            return
+
         regime = "LONGO (> 90 dias)" if total_dias > 90 else "CURTO (≤ 90 dias)"
-        faixa = classificar_ajuda_custo_por_dias(total_dias)
         total_diarias_v = sum((r.total_diarias for r in resultados), Decimal("0"))
         total_deslocamentos_v = sum((r.total_deslocamento for r in resultados), Decimal("0"))
         total_geral = total_diarias_v + total_deslocamentos_v
@@ -692,17 +704,25 @@ def _coletar_missoes(militar: Militar) -> list[Missao]:
 def _aplicar_periodo_comissionamento(militar: Militar, missoes: list[Missao]) -> None:
     console.print("\n[bold]=== ENQUADRAMENTO DO COMISSIONAMENTO ===[/bold]")
     inicio, termino = periodo_missoes(missoes)
-    faixa = classificar_ajuda_custo_por_dias(dias_missoes(missoes))
+    total_dias = dias_missoes(missoes)
     dias_corridos = dias_periodo(inicio, termino)
     militar.data_inicio_comissionamento = inicio
     militar.data_termino_comissionamento = termino
     console.print(
-        f"  Período derivado das missões: "
+        f"  Duração administrativa do comissionamento: "
         f"{inicio.strftime('%d/%m/%Y')} a {termino.strftime('%d/%m/%Y')} "
         f"({dias_corridos} dias corridos).",
         style="bold green",
     )
-    console.print(f"  Enquadramento de ajuda de custo: {faixa.value}.", style="bold green")
+    try:
+        faixa = classificar_ajuda_custo_por_dias(total_dias)
+        console.print(f"  Enquadramento de ajuda de custo: {faixa.value}.", style="bold green")
+    except ValueError:
+        console.print(
+            f"  [bold red]Comissionamento não aplicável:[/bold red] "
+            f"total de dias fora de sede é [bold]{total_dias}[/bold] (≤ 15). "
+            f"O Anexo V da Lei 13.954/2019 não prevê ajuda de custo nessa situação.",
+        )
 
 
 def _pedir_nome_arquivo(nome_militar: str, posto: Posto) -> str:

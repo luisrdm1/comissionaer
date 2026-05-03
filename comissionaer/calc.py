@@ -22,27 +22,19 @@ from comissionaer.models import (
 )
 
 _FATORES_AJUDA_CUSTO: dict[tuple[FaixaAjudaCusto, Dependentes], tuple[Decimal, Decimal]] = {
-    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS, Dependentes.SIM): (
-        Decimal("0"),
-        Decimal("0"),
-    ),
-    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS, Dependentes.NAO): (
-        Decimal("0"),
-        Decimal("0"),
-    ),
-    (FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES, Dependentes.SIM): (
+    (FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES, Dependentes.SIM): (
         Decimal("1"),
         Decimal("1"),
     ),
-    (FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES, Dependentes.NAO): (
+    (FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES, Dependentes.NAO): (
         Decimal("0.5"),
         Decimal("0.5"),
     ),
-    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES, Dependentes.SIM): (
+    (FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES, Dependentes.SIM): (
         Decimal("2"),
         Decimal("1"),
     ),
-    (FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES, Dependentes.NAO): (
+    (FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES, Dependentes.NAO): (
         Decimal("1"),
         Decimal("0.5"),
     ),

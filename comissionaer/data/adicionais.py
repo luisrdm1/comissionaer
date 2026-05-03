@@ -25,7 +25,8 @@ ADICIONAL_MILITAR: dict[Posto, Decimal] = {
     Posto.SEGUNDO_SARGENTO: Decimal("0.16"),
     Posto.TERCEIRO_SARGENTO: Decimal("0.16"),
     Posto.CABO: Decimal("0.13"),
-    Posto.SOLDADO: Decimal("0.13"),
+    Posto.SOLDADO_1_CLASSE: Decimal("0.13"),
+    Posto.SOLDADO_2_CLASSE: Decimal("0.13"),
 }
 
 # Adicional de Disponibilidade Militar — percentual sobre o soldo
@@ -48,5 +49,6 @@ ADICIONAL_DISPONIBILIDADE: dict[Posto, Decimal] = {
     Posto.SEGUNDO_SARGENTO: Decimal("0.12"),
     Posto.TERCEIRO_SARGENTO: Decimal("0.06"),
     Posto.CABO: Decimal("0.06"),
-    Posto.SOLDADO: Decimal("0.05"),
+    Posto.SOLDADO_1_CLASSE: Decimal("0.05"),
+    Posto.SOLDADO_2_CLASSE: Decimal("0.05"),
 }

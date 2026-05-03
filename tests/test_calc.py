@@ -1,6 +1,8 @@
 from datetime import date
 from decimal import Decimal
 
+import pytest
+
 from comissionaer.calc import calcular, calcular_missao, fatores_ajuda_custo
 from comissionaer.models import (
     CategoriaDiaria,
@@ -10,6 +12,7 @@ from comissionaer.models import (
     Militar,
     Missao,
     Posto,
+    classificar_ajuda_custo_por_dias,
 )
 
 
@@ -60,7 +63,6 @@ def test_36_dias_de_missao_nao_e_acima_de_3_meses_mesmo_com_gap_entre_missoes() 
     calculo = calcular(_militar(), missoes)
 
     assert calculo.total_dias == 36
-    # span = maio a agosto > 3 meses, mas classificação usa 36 dias → 1ª faixa
     assert calculo.fator_ida == Decimal("1")
     assert calculo.fator_volta == Decimal("1")
 
@@ -102,58 +104,57 @@ def test_90_dias_totais_ainda_e_primeira_faixa() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Todas as combinações de faixa × dependentes
+# Comissionamento ≤ 15 dias é rejeitado
 # ---------------------------------------------------------------------------
 
 
-def test_faixa_ate_15_dias_com_dependentes_fator_zero() -> None:
+def test_calcular_ate_15_dias_rejeitado() -> None:
+    missoes = [_missao(date(2026, 1, 1), date(2026, 1, 15))]  # 15 dias
+
+    with pytest.raises(ValueError, match="igual ou inferior a 15"):
+        calcular(_militar(), missoes)
+
+
+def test_classificar_ate_15_dias_rejeitado() -> None:
+    with pytest.raises(ValueError, match="igual ou inferior a 15"):
+        classificar_ajuda_custo_por_dias(15)
+
+
+# ---------------------------------------------------------------------------
+# Todas as combinações de faixa × dependentes (Anexo V — Lei 13.954/2019)
+# ---------------------------------------------------------------------------
+
+
+def test_faixa_15_dias_a_3_meses_com_dependentes_fator_1_mais_1() -> None:
     fator_ida, fator_volta = fatores_ajuda_custo(
-        FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS, Dependentes.SIM
-    )
-
-    assert fator_ida == Decimal("0")
-    assert fator_volta == Decimal("0")
-
-
-def test_faixa_ate_15_dias_sem_dependentes_fator_zero() -> None:
-    fator_ida, fator_volta = fatores_ajuda_custo(
-        FaixaAjudaCusto.SEM_DESLIGAMENTO_ATE_15_DIAS, Dependentes.NAO
-    )
-
-    assert fator_ida == Decimal("0")
-    assert fator_volta == Decimal("0")
-
-
-def test_faixa_15_a_3_meses_com_dependentes_fator_1_mais_1() -> None:
-    fator_ida, fator_volta = fatores_ajuda_custo(
-        FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES, Dependentes.SIM
+        FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES, Dependentes.SIM
     )
 
     assert fator_ida == Decimal("1")
     assert fator_volta == Decimal("1")
 
 
-def test_faixa_15_a_3_meses_sem_dependentes_fator_meio_mais_meio() -> None:
+def test_faixa_15_dias_a_3_meses_sem_dependentes_fator_meio_mais_meio() -> None:
     fator_ida, fator_volta = fatores_ajuda_custo(
-        FaixaAjudaCusto.SEM_DESLIGAMENTO_15_DIAS_A_3_MESES, Dependentes.NAO
+        FaixaAjudaCusto.SUPERIOR_15_DIAS_ATE_3_MESES, Dependentes.NAO
     )
 
     assert fator_ida == Decimal("0.5")
     assert fator_volta == Decimal("0.5")
 
 
-def test_faixa_acima_3_meses_com_dependentes_fator_2_mais_1() -> None:
+def test_faixa_3_meses_a_12_meses_com_dependentes_fator_2_mais_1() -> None:
     fator_ida, fator_volta = fatores_ajuda_custo(
-        FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES, Dependentes.SIM
+        FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES, Dependentes.SIM
     )
 
     assert fator_ida == Decimal("2")
     assert fator_volta == Decimal("1")
 
 
-def test_faixa_acima_3_meses_sem_dependentes_fator_1_mais_meio() -> None:
+def test_faixa_3_meses_a_12_meses_sem_dependentes_fator_1_mais_meio() -> None:
     fator_ida, fator_volta = fatores_ajuda_custo(
-        FaixaAjudaCusto.SEM_DESLIGAMENTO_ACIMA_3_MESES, Dependentes.NAO
+        FaixaAjudaCusto.SUPERIOR_3_MESES_ATE_12_MESES, Dependentes.NAO
     )
 
     assert fator_ida == Decimal("1")
@@ -163,17 +164,6 @@ def test_faixa_acima_3_meses_sem_dependentes_fator_1_mais_meio() -> None:
 # ---------------------------------------------------------------------------
 # calcular — integração completa com cada faixa
 # ---------------------------------------------------------------------------
-
-
-def test_calcular_ate_15_dias_ajuda_custo_zero() -> None:
-    missao = _missao(date(2026, 1, 1), date(2026, 1, 15))  # 15 dias
-
-    calculo = calcular(_militar(), [missao])
-
-    assert calculo.total_dias == 15
-    assert calculo.fator_ida == Decimal("0")
-    assert calculo.fator_volta == Decimal("0")
-    assert calculo.total_ajuda_custo == Decimal("0")
 
 
 def test_calcular_usa_base_abertura_e_encerramento_separados() -> None:
